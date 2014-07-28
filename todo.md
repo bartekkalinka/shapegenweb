@@ -1,0 +1,28 @@
+- [ ] ruby & java versions unification
+  - [ ] same urls for services and web client
+  - [ ] common web client code
+    - [ ] static html in java
+    - [ ] common html + javascript code through links in separate clients folder
+- [ ] web client development
+  - [ ] size fields
+    - [ ] smaller fields
+    - [ ] validation
+  - [ ] better zoom (times factor instead of inc/decr.)
+  - [ ] stop for loop mode
+- [ ] java-specific
+  - [ ] actually use Spring injection and configuration for core components
+  - [ ] switch to Spring Boot
+- [ ] unit tests
+  - [ ] client code in ruby + java (consuming REST)
+  - [ ] shape generator unit tests where possible
+- [ ] expand gerate service
+  - [ ] refactorization (start with ruby version, using richness of ruby constructs)
+  - [ ] better tile shapes (more levels of noise)
+- [ ] mutating shapes service (post a shape, get a mutated shape)
+- [ ] persistence service for shapes
+- [ ] other kinds of shapes
+  - [ ] start with non-tile boundaries between two tile shapes
+- [ ] implementations in other languages
+  - [ ] scala
+- [ ] shape generator -> terrain generator
+- [ ] text rendering as an alternative
