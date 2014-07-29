@@ -24,7 +24,7 @@ $(document).ready(function() {
 	function getAjaxShape() {
 		var sizex = $('#sizex').val();
 		var sizey = $('#sizey').val();
-		$.getJSON("shapegenweb", { "sizex":sizex, "sizey":sizey}, function(returnedData) {
+		$.getJSON("shapegenweb/generate", { "sizex":sizex, "sizey":sizey}, function(returnedData) {
 			glob.shapeData = returnedData;
 			drawShape();
 		});

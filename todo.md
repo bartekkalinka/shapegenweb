@@ -1,5 +1,5 @@
 - [ ] ruby & java versions unification
-  - [ ] same urls for services and web client
+  - [x] same urls for services and web client
   - [ ] common web client code
     - [ ] static html in java
     - [ ] common html + javascript code through links in separate clients folder
@@ -15,7 +15,7 @@
 - [ ] unit tests
   - [ ] client code in ruby + java (consuming REST)
   - [ ] shape generator unit tests where possible
-- [ ] expand gerate service
+- [ ] expand generate service
   - [ ] refactorization (start with ruby version, using richness of ruby constructs)
   - [ ] better tile shapes (more levels of noise)
 - [ ] mutating shapes service (post a shape, get a mutated shape)

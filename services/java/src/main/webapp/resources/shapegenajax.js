@@ -22,7 +22,7 @@ $(document).ready(function() {
 	});
 	
 	function getAjaxShape() {
-		$.getJSON("ajaxshape", { "sizex":"10", "sizey":"17"}, function(returnedData) {
+		$.getJSON("generate", { "sizex":"10", "sizey":"17"}, function(returnedData) {
 			glob.shapeData = returnedData;
 			drawShape();
 		});

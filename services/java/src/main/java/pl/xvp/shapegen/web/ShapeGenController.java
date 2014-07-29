@@ -16,35 +16,28 @@ import pl.xvp.shapegen.core.rand.RandomSourceImpl;
 
 @Controller
 public class ShapeGenController {
-	 @RequestMapping("/shapegentext")
-	    public String shapegenText(
-	    	@RequestParam(value="sizex", required=false) Integer sizex,
-	    	@RequestParam(value="sizey", required=false) Integer sizey,
-	    	Model model) {
-	    	
-	        model.addAttribute("sizex", sizex);
-	        model.addAttribute("sizey", sizey);
-	        
-	        Shape shape = (new ShapeGenerator(new RandomSourceImpl(), sizex.intValue(), sizey.intValue())).generateShape();
-	        model.addAttribute("shape", ShapeTextRenderer.renderShapeToText(shape));
-	        
-	        return "shapegen/shapegentext";
-	    }
-	    
-/*	 
-	    @RequestMapping("/shapegenajax")
-	    public String shapegenAjaxPage() {
-	    	return "shapegen/shapegenajax.html";
-	    }
-*/	    
-	    		
-		@RequestMapping(value="/ajaxshape", method=RequestMethod.GET)
-		public @ResponseBody ShapeJSON getShape(
-				@RequestParam(value="sizex", required=false) Integer sizex,
-				@RequestParam(value="sizey", required=false) Integer sizey) {
-			Shape shape = (new ShapeGenerator(new RandomSourceImpl(), sizex.intValue(), sizey.intValue())).generateShape();
-			return ShapeJSON.json(shape);
-		}
+	@RequestMapping("/shapegentext")
+    public String shapegenText(
+    	@RequestParam(value="sizex", required=false) Integer sizex,
+    	@RequestParam(value="sizey", required=false) Integer sizey,
+    	Model model) {
+    	
+        model.addAttribute("sizex", sizex);
+        model.addAttribute("sizey", sizey);
+        
+        Shape shape = (new ShapeGenerator(new RandomSourceImpl(), sizex.intValue(), sizey.intValue())).generateShape();
+        model.addAttribute("shape", ShapeTextRenderer.renderShapeToText(shape));
+        
+        return "shapegen/shapegentext";
+    }
+    
+	@RequestMapping(value="/generate", method=RequestMethod.GET)
+	public @ResponseBody ShapeJSON getShape(
+			@RequestParam(value="sizex", required=false) Integer sizex,
+			@RequestParam(value="sizey", required=false) Integer sizey) {
+		Shape shape = (new ShapeGenerator(new RandomSourceImpl(), sizex.intValue(), sizey.intValue())).generateShape();
+		return ShapeJSON.json(shape);
+	}
 }
 
 
