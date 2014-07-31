@@ -38,6 +38,11 @@ public class ShapeGenController {
 		Shape shape = (new ShapeGenerator(new RandomSourceImpl(), sizex.intValue(), sizey.intValue())).generateShape();
 		return ShapeJSON.json(shape);
 	}
+	
+	 @RequestMapping(value = "/", method = RequestMethod.GET)
+	 public String redirect() {
+		 return "redirect:/resources/shapegenajax.html";
+	 }
 }
 
 

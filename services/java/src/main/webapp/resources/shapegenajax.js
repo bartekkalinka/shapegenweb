@@ -13,16 +13,18 @@ $(document).ready(function() {
 		autoLoop();
 	});
 	$('#btnZoomIn').click(function() {
-		glob.tilesize = glob.tilesize + 1;
+		glob.tilesize = glob.tilesize * 1.2;
 		drawShape();
 	});
 	$('#btnZoomOut').click(function() {
-		glob.tilesize = glob.tilesize - 1;		
+		glob.tilesize = glob.tilesize / 1.2;		
 		drawShape();
 	});
 	
 	function getAjaxShape() {
-		$.getJSON("generate", { "sizex":"10", "sizey":"17"}, function(returnedData) {
+		var sizex = $('#sizex').val();
+		var sizey = $('#sizey').val();
+		$.getJSON("/shapegenweb/generate", { "sizex":sizex, "sizey":sizey}, function(returnedData) {
 			glob.shapeData = returnedData;
 			drawShape();
 		});
