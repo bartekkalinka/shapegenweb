@@ -1,13 +1,13 @@
-- [ ] ruby & java versions unification
+- [x] ruby & java versions unification
   - [x] same urls for services and web client
-  - [ ] common web client code
-    - [ ] static html in java
-    - [ ] common html + javascript code through links in separate clients folder
+  - [x] common web client code
+    - [x] static html in java
+    - [x] common html + javascript code
 - [ ] web client development
   - [ ] size fields
     - [ ] smaller fields
     - [ ] validation
-  - [ ] better zoom (times factor instead of inc/decr.)
+  - [x] better zoom (times factor instead of inc/decr.)
   - [ ] stop for loop mode
 - [ ] java-specific
   - [ ] actually use Spring injection and configuration for core components
