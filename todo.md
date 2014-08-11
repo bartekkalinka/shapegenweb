@@ -12,6 +12,8 @@
 - [ ] java-specific
   - [ ] actually use Spring injection and configuration for core components
   - [ ] switch to Spring Boot
+  - [ ] switch to Gradle
+  - [ ] rewrite in Groovy
 - [ ] unit tests
   - [ ] client code in ruby + java (consuming REST)
   - [ ] shape generator unit tests where possible
