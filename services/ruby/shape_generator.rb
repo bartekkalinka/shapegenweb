@@ -3,12 +3,9 @@ class ShapeGenerator
   attr_reader :size_x, :size_y, :shape, :debug_info
 
   # constructor, main loop of shape generation is here
-  def initialize(size_x, size_y, cutoff_lf)
+  def initialize(size_x, size_y)
     @size_x = size_x
     @size_y = size_y
-    begin
-      generate_shape_4(cutoff_lf)
-    end while fail_beauty_stats
   end
 
   # checks if shape looks good with some "magic" stats limits
@@ -242,7 +239,7 @@ class ShapeGenerator
 
   # generate shape by variation of 2-dimensional Perlin noise
   # possible TODOs: elimination of holes, trimming size to fit existing shape
-  def generate_shape_4(cutoff_lf)
+  def generate_shape_4
     @shape = build_empty_shape
     noise = scale_noise_table(get_noise_table())
     noise2 = get_smooth_noise_table(noise)
@@ -258,9 +255,14 @@ class ShapeGenerator
       end
     end
 
-    if(cutoff_lf)
-      @shape = cutoff_loose_fragments(@shape)
-    end
+    @shape = cutoff_loose_fragments(@shape)
+  end
+
+  # generate the shape until it passes arbitrary stats
+  def generate
+    begin
+      generate_shape_4
+    end while fail_beauty_stats
   end
 
 end
