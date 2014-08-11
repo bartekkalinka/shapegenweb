@@ -2,6 +2,7 @@ class ShapeGenerator
 
   attr_reader :size_x, :size_y, :shape, :debug_info
 
+  # constructor, main loop of shape generation is here
   def initialize(size_x, size_y, cutoff_lf)
     @size_x = size_x
     @size_y = size_y
@@ -10,12 +11,14 @@ class ShapeGenerator
     end while fail_beauty_stats
   end
 
+  # checks if shape looks good with some "magic" stats limits
   def fail_beauty_stats
     w = weight(@shape)
     s = @size_x * @size_y
     return(w <= 6 or (w >= 7 and w <=12 and s >= 4 * w))
   end
 
+  # returns noise table, that is: 2-dim. array with random numbers between 0 and 1000
   def get_noise_table()
     tab = []
 
@@ -29,15 +32,21 @@ class ShapeGenerator
     return tab
   end
 
+  # sets noise table value for x, y in boundaries [0, @size>
+  # does nothing for x, y outside of boundaries
   def safe_noise_set(noise, x, y, value)
     if(x >= 0 and y >= 0 and x < @size_x and y < @size_y)
       noise[x][y] = value
     end
   end
 
+  # table noise -> 2 * noise
+  # fitting in table of same size
+  # so effectively: 1/4th of 2 * noise
   def scale_noise_table(noise)
-    tab = []
 
+    # prepare table filled with 0s
+    tab = []
     for x in (0 ... @size_x)
       tab[x] = []
       for y in (0 ... @size_y)
@@ -57,6 +66,7 @@ class ShapeGenerator
     return tab
   end
 
+  # get value noise[x][y] without exception if x, y are out of bounds (0 instead)
   def safe_noise_test(noise, x, y)
     if(x >= 0 and y >= 0 and x < @size_x and y < @size_y)
       return noise[x][y]
@@ -65,7 +75,13 @@ class ShapeGenerator
     end
   end
 
+  # do "smoothing" step on noise table
+  # "smoothing" is averaging the values of a position and surrounding positions in the table
+  # with weights: center as 1/4, sides (N, E, S, W) as 1/8 each, corners (NE, NW, SE, SW) as 1/16 each
   def get_smooth_noise_table(noise)
+
+    # prepare table filled with 0s
+    # TODO duplication with scale_noise_table
     smooth = []
     for x in (0 ... @size_x)
       smooth[x] = []
@@ -86,6 +102,7 @@ class ShapeGenerator
     return smooth
   end
 
+  # get standard-size table filled with false values
   def build_empty_shape
     shape = []
 
@@ -99,6 +116,7 @@ class ShapeGenerator
     return shape
   end
 
+  # get standard-size table filled with nil values
   def build_empty_shape_nil
     shape = []
 
@@ -112,6 +130,7 @@ class ShapeGenerator
     return shape
   end
 
+  # weight: number of true values in a table
   def weight(shape)
     ret = 0
 
@@ -125,7 +144,8 @@ class ShapeGenerator
     
     return ret
   end
-
+  
+  # find first true value in a shape table
   def find_first_point(shape)
     for x in (0 ... @size_x)
       for y in (0 ... @size_y)
@@ -137,6 +157,7 @@ class ShapeGenerator
     return nil
   end
 
+  # from_shape - sub_shape
   def substract_shape(from_shape, sub_shape)
     for x in (0 ... @size_x)
       for y in (0 ... @size_y)
@@ -148,6 +169,7 @@ class ShapeGenerator
     return from_shape
   end
 
+  # [true/false/nil] table -> [true/false] table
   def denil_chunk(chunk)
    denil = build_empty_shape
    for x in (0 ... @size_x)
@@ -160,6 +182,10 @@ class ShapeGenerator
     return denil
   end
 
+  # recursive whole shape extracting
+  # curr_chunk - accumulated result shape
+  # map_shape - input nil-shape (possibly consisting of many separate whole shapes)
+  # x, y - current position of processing
   def get_whole_shape(curr_chunk, map_shape, x, y)
     if(x >= 0 and y >= 0 and x < @size_x and y < @size_y)
       if(curr_chunk[x][y] != nil)
@@ -180,6 +206,9 @@ class ShapeGenerator
     end
   end
 
+  # divide shape
+  # into whole shapes it consists of
+  # return a list of whole shapes
   def divide_into_whole_shapes(shape)
     left_over = shape
     chunks = []
@@ -193,6 +222,10 @@ class ShapeGenerator
     return chunks
   end
 
+  # get one whole shape from input shape
+  # by 1. dividing it into whole shapes
+  # 2. choosing the largest whole shape as a result
+  # TODO better code (no loop, use of some higher-order function)
   def cutoff_loose_fragments(shape)
     chunks = divide_into_whole_shapes(shape)
     max_weight = 0
@@ -207,13 +240,15 @@ class ShapeGenerator
     return max_chunk
   end
 
-  # variation of 2-dimensional Perlin noise
+  # generate shape by variation of 2-dimensional Perlin noise
   # possible TODOs: elimination of holes, trimming size to fit existing shape
   def generate_shape_4(cutoff_lf)
     @shape = build_empty_shape
     noise = scale_noise_table(get_noise_table())
     noise2 = get_smooth_noise_table(noise)
 
+    # noise table -> shape
+    # TODO transfer to utility module/class
     for x in (0 ... @size_x)
       for y in (0 ... @size_y)
         draw_xy = noise2[x][y]
@@ -228,6 +263,7 @@ class ShapeGenerator
     end
   end
 
+  # TODO not used
   def random_shape_add(minx = 0, miny = 0, maxx = @size_x - 1, maxy = @size_y - 1)
     rx = rand(maxx - minx + 1) + minx
     ry = rand(maxy - miny + 1) + miny
@@ -235,12 +271,14 @@ class ShapeGenerator
     return rx, ry
   end
 
+  # TODO not used in used methods
   def safe_shape_add(x, y, shape=@shape)
     if(x >= 0 and y >= 0 and x < @size_x and y < @size_y)
       shape[x][y] = true
     end
   end
 
+  # TODO not used
   def grow_turn
     new_shape = build_empty_shape
 
@@ -259,6 +297,7 @@ class ShapeGenerator
     @shape = new_shape
   end
 
+  # TODO not used in used methods
   def shape_total_area
     ret = 0
 
@@ -273,6 +312,7 @@ class ShapeGenerator
     return ret
   end
 
+  # TODO not used in used methods
   def safe_test_add(x, y, src_shape, trg_shape)
     ret = 0
 
@@ -286,6 +326,7 @@ class ShapeGenerator
     return ret
   end
 
+  # TODO not used in used methods
   def copy_array(src_shape, trg_shape)
     for x in (0 ... @size_x)
       for y in (0 ... @size_y)
@@ -296,6 +337,7 @@ class ShapeGenerator
     end
   end
 
+  # TODO not used
   def test_integrity(startx, starty)
     if(not @shape[startx][starty])
       return nil
