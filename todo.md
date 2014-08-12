@@ -13,12 +13,16 @@
   - [ ] actually use Spring injection and configuration for core components
   - [ ] switch to Spring Boot
   - [ ] switch to Gradle
-  - [ ] rewrite in Groovy
+  - [ ] rewrite in Groovy (after ruby refactorization)
 - [ ] unit tests
   - [ ] client code in ruby + java (consuming REST)
   - [ ] shape generator unit tests where possible
+    - [ ] any tests before refactorization
+    - [ ] use some testing framework
 - [ ] expand generate service
-  - [ ] refactorization (start with ruby version, using richness of ruby constructs)
+  - [ ] refactorization (start with ruby version)
+    - [ ] dividing shape generator into layers and classes
+    - [ ] shorter code (using ruby blocks)
   - [ ] better tile shapes (more levels of noise)
 - [ ] mutating shapes service (post a shape, get a mutated shape)
 - [ ] persistence service for shapes
