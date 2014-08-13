@@ -17,7 +17,10 @@ RSpec.describe ShapeGenerator do
 
   it "get_noise_table" do
     t = ShapeGeneratorTest.new
-    expect(t.testgen.get_noise_table.flatten.index { |elem| elem < 0 or elem > 1000 }).to eq(nil)
+    testnewnoisetab = t.testgen.get_noise_table
+    expect(testnewnoisetab.length).to eq(4)
+    expect(testnewnoisetab.index { |col| col.length != 3 }).to eq(nil)
+    expect(testnewnoisetab.flatten.index { |elem| elem < 0 or elem > 1000 }).to eq(nil)
   end
 
   it "safe_noise_set" do
@@ -25,6 +28,11 @@ RSpec.describe ShapeGenerator do
     t.testgen.safe_noise_set(t.testnoisetab, 3, 2, 78)
     expect(t.testnoisetab[3][2]).to eq(78)
     t.testgen.safe_noise_set(t.testnoisetab, 20, 4, 78) # no error -> test passed
+  end
+
+  it "get_zeros_table" do
+    t = ShapeGeneratorTest.new
+    expect(t.testgen.get_zeros_table.flatten.index { |elem| elem != 0 }).to eq(nil)
   end
 
   it "scale_noise_table" do
@@ -40,7 +48,7 @@ RSpec.describe ShapeGenerator do
 
   it "get_smooth_noise_table" do
     t = ShapeGeneratorTest.new
-    expect(t.testgen.get_smooth_noise_table(t.testnoisetab)).to eq([[226, 394, 295], [289, 550, 443], [298, 432, 283], [231, 235, 97]])
+    expect(t.testgen.get_smooth_noise_table(t.testnoisetab)).to eq([[226, 393, 294], [289, 549, 442], [297, 431, 282], [231, 234, 97]])
   end
 
   it "build_empty_shape" do
