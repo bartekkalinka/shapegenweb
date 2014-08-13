@@ -105,5 +105,12 @@ RSpec.describe ShapeGenerator do
       [[false, true, false], [false, true, true], [false, true, false], [false, false, false]]
     )
   end
+
+  it "generate_shape" do
+    t = ShapeGeneratorTest.new
+    testshape = t.testgen.generate_shape
+    expect(testshape.length).to eq(4)
+    expect(testshape.index { |col| col.length != 3 }).to eq(nil)
+  end
 end
 

@@ -14,21 +14,26 @@
   - [ ] switch to Spring Boot
   - [ ] switch to Gradle
   - [ ] rewrite in Groovy (after ruby refactorization)
+    - [ ] unit tests in groovy
 - [ ] unit tests
   - [ ] client code in ruby + java (consuming REST)
-  - [ ] shape generator unit tests where possible
-    - [ ] any tests before refactorization
-    - [ ] use some testing framework
+  - [x] shape generator unit tests where possible
+    - [x] any tests before refactorization
+    - [x] use some testing framework
 - [ ] expand generate service
-  - [ ] refactorization (start with ruby version)
-    - [ ] dividing shape generator into layers and classes
-    - [ ] shorter code (using ruby blocks)
-  - [ ] better tile shapes (more levels of noise)
+  - [x] refactorization (start with ruby version)
+    - [x] shorter code (using ruby blocks)
+  - [ ] dividing shape generator into layers and classes
+  - [x] better tile shapes (more levels of noise)
+  - [ ] number of noise levels depending on size
+  - [ ] some joining mechanism for generating larger shapes in many turns
+  - [ ] ruby error when generating 50 x 50 with 3 noise levels: SystemStackError - stack level too deep
 - [ ] mutating shapes service (post a shape, get a mutated shape)
 - [ ] persistence service for shapes
+  - [ ] shape generator -> terrain generator
+    - [ ] placing shapes on a map
 - [ ] other kinds of shapes
   - [ ] start with non-tile boundaries between two tile shapes
 - [ ] implementations in other languages
   - [ ] scala
-- [ ] shape generator -> terrain generator
 - [ ] text rendering as an alternative
