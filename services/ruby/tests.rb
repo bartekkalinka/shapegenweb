@@ -99,5 +99,11 @@ RSpec.describe ShapeGenerator do
     )
   end
 
+  it "render_shape_from_noise" do
+    t = ShapeGeneratorTest.new
+    expect(t.testgen.render_shape_from_noise(t.testnoisetab)).to eq(
+      [[false, true, false], [false, true, true], [false, true, false], [false, false, false]]
+    )
+  end
 end
 

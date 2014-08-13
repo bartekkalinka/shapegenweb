@@ -80,27 +80,12 @@ class ShapeGenerator
 
   # from_shape - sub_shape
   def substract_shape(from_shape, sub_shape)
-    for x in (0 ... @size_x)
-      for y in (0 ... @size_y)
-        if(from_shape[x][y] and sub_shape[x][y])
-          from_shape[x][y] = false
-        end
-      end
-    end
-    return from_shape
+    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| from_shape[x][y] and not sub_shape[x][y] }}
   end
 
   # [true/false/nil] table -> [true/false] table
   def denil_chunk(chunk)
-   denil = build_empty_shape
-   for x in (0 ... @size_x)
-      for y in (0 ... @size_y)
-        if(chunk[x][y])
-          denil[x][y] = true
-        end
-      end
-    end
-    return denil
+    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| ![false,nil].include?(chunk[x][y]) }}
   end
 
   # recursive whole shape extracting
@@ -108,21 +93,11 @@ class ShapeGenerator
   # map_shape - input nil-shape (possibly consisting of many separate whole shapes)
   # x, y - current position of processing
   def get_whole_shape(curr_chunk, map_shape, x, y)
-    if(x >= 0 and y >= 0 and x < @size_x and y < @size_y)
-      if(curr_chunk[x][y] != nil)
-        return
-      end
-      curr_chunk[x][y] = false
-      if(map_shape[x][y])
-        curr_chunk[x][y] = true
-        get_whole_shape(curr_chunk, map_shape, x - 1, y - 1)
-        get_whole_shape(curr_chunk, map_shape, x - 1, y)
-        get_whole_shape(curr_chunk, map_shape, x - 1, y + 1)
-        get_whole_shape(curr_chunk, map_shape, x , y - 1)
-        get_whole_shape(curr_chunk, map_shape, x , y + 1)
-        get_whole_shape(curr_chunk, map_shape, x + 1, y - 1)
-        get_whole_shape(curr_chunk, map_shape, x + 1, y)
-        get_whole_shape(curr_chunk, map_shape, x + 1, y + 1)
+    if((0...@size_x).include?(x) and (0...@size_y).include?(y))
+      if(curr_chunk[x][y] == nil)
+        if(curr_chunk[x][y] = map_shape[x][y])
+          [-1,0,1].product([-1,0,1]).each { |d| get_whole_shape(curr_chunk, map_shape, x + d[0], y + d[1]) }
+        end
       end
     end
   end
@@ -146,46 +121,27 @@ class ShapeGenerator
   # get one whole shape from input shape
   # by 1. dividing it into whole shapes
   # 2. choosing the largest whole shape as a result
-  # TODO better code (no loop, use of some higher-order function)
   def cutoff_loose_fragments(shape)
-    chunks = divide_into_whole_shapes(shape)
-    max_weight = 0
-    max_chunk = shape
-    chunks.each { |chunk|
-      ch_weight = weight(chunk)
-      if(ch_weight > max_weight)
-        max_chunk = chunk
-        max_weight = ch_weight
-      end
-    }
-    return max_chunk
+    divide_into_whole_shapes(shape).max_by { |chunk| weight(chunk) }
+  end
+
+  # noise table -> shape
+  def render_shape_from_noise(noise)
+    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| (noise[x][y] >= 500) }}
   end
 
   # generate shape by variation of 2-dimensional Perlin noise
   # possible TODOs: elimination of holes, trimming size to fit existing shape
-  def generate_shape_4
-    @shape = build_empty_shape
+  def generate_shape
     noise = scale_noise_table(get_noise_table())
     noise2 = get_smooth_noise_table(noise)
-
-    # noise table -> shape
-    # TODO transfer to utility module/class
-    for x in (0 ... @size_x)
-      for y in (0 ... @size_y)
-        draw_xy = noise2[x][y]
-        if(draw_xy >= 500)
-          @shape[x][y] = true
-        end
-      end
-    end
-
-    @shape = cutoff_loose_fragments(@shape)
+    @shape = cutoff_loose_fragments(render_shape_from_noise(noise2))
   end
 
   # generate the shape until it passes arbitrary stats
   def generate
     begin
-      generate_shape_4
+      generate_shape
     end while fail_beauty_stats
   end
 
