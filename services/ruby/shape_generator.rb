@@ -73,14 +73,9 @@ class ShapeGenerator
   
   # find first true value in a shape table
   def find_first_point(shape)
-    for x in (0 ... @size_x)
-      for y in (0 ... @size_y)
-        if(shape[x][y])
-          return x, y
-        end
-      end
-    end
-    return nil
+    searchtab = (0...@size_x).collect { |x| shape[x].index {|elem| elem} }
+    i = searchtab.index {|elem| elem!=nil}
+    if(i) then [i, searchtab[i]] else nil end
   end
 
   # from_shape - sub_shape
