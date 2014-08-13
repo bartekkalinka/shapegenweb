@@ -29,6 +29,7 @@
   - [ ] some joining mechanism for generating larger shapes in many turns
   - [ ] ruby error when generating 50 x 50 with 3 noise levels: SystemStackError - stack level too deep
 - [ ] mutating shapes service (post a shape, get a mutated shape)
+  - [ ] drawing shapes from client
 - [ ] persistence service for shapes
   - [ ] shape generator -> terrain generator
     - [ ] placing shapes on a map
