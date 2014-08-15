@@ -115,7 +115,7 @@ class ShapeGenerator
       chunks << denil_chunk(chunk)
       left_over = substract_shape(left_over, chunk)
     end
-    return chunks
+    return chunks + [left_over]
   end
 
   # get one whole shape from input shape
@@ -131,20 +131,20 @@ class ShapeGenerator
   end
 
   # generate shape by variation of 2-dimensional Perlin noise
-  def generate_shape
+  def generate_shape(iter, cutoff)
     noise = get_noise_table
-    3.times {
+    iter.times {
       noise = scale_noise_table(noise)
       noise = get_smooth_noise_table(noise)
     }
-    @shape = render_shape_from_noise(noise)
-    @shape = cutoff_loose_fragments(@shape)
+    shape = render_shape_from_noise(noise)
+    @shape = (if cutoff then cutoff_loose_fragments(shape) else shape end)
   end
 
   # generate the shape until it passes arbitrary stats
-  def generate
+  def generate(iter, cutoff)
     begin
-      generate_shape
+      generate_shape(iter, cutoff)
     end while fail_beauty_stats
   end
 
