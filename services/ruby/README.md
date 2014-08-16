@@ -9,4 +9,12 @@ default client url: http://localhost:4567/shapegenweb
 
 webservice example call: http://localhost:4567/shapegenweb/generate?sizex=10&sizey=7
 
+another client variant url: http://localhost:4567/movingterrain.html
+
 run tests: rspec tests.rb
+
+installation on openshift: 
+
+http://ruby-bka.rhcloud.com/shapegenweb
+
+http://ruby-bka.rhcloud.com/movingterrain.html
