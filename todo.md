@@ -25,9 +25,8 @@
     - [x] shorter code (using ruby blocks)
   - [ ] dividing shape generator into layers and classes
   - [x] better tile shapes (more levels of noise)
-  - [ ] number of noise levels depending on size
   - [ ] some joining mechanism for generating larger shapes in many turns
-  - [ ] ruby error when generating 50 x 50 with 3 noise levels: SystemStackError - stack level too deep
+  - [ ] ruby error when cutting off loose fragments on 50 x 50 with 3 noise levels: stack level too deep
 - [ ] mutating shapes service (post a shape, get a mutated shape)
   - [ ] drawing shapes from client
 - [ ] shape generator -> terrain generator
