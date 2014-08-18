@@ -30,11 +30,17 @@
   - [ ] ruby error when generating 50 x 50 with 3 noise levels: SystemStackError - stack level too deep
 - [ ] mutating shapes service (post a shape, get a mutated shape)
   - [ ] drawing shapes from client
-- [ ] persistence service for shapes
-  - [ ] shape generator -> terrain generator
-    - [ ] placing shapes on a map
+- [ ] shape generator -> terrain generator
+  - [ ] moving terrain page
+    - [ ] new client page with arrows control
+    - [ ] generating smooth continuation for current view
+      - [ ] generate service passing base noise table used for generation
+      - [ ] new service for generation + movement (noise table as parameter and result)
+  - [ ] persistence service for shapes
+  - [ ] placing shapes on a map
 - [ ] other kinds of shapes
   - [ ] start with non-tile boundaries between two tile shapes
+  - [ ] converting tile shapes to polygons
 - [ ] implementations in other languages
   - [ ] scala
 - [ ] text rendering as an alternative
