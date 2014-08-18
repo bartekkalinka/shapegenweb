@@ -35,9 +35,10 @@ class ShapeGenerator
   # fitting in table of same size
   # so effectively: 1/4th of 2 * noise
   def scale_noise_table(noise)
+    half_x, half_y = [@size_x, @size_y].collect { |a| (a / 2).ceil + (a % 2) - 1 }
     tab = get_zeros_table
-    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| [0,1].product([0,1]).each {
-      |a,b| safe_noise_set(tab, 2 * x + a, 2 * y + b, noise[x][y])
+    (0 ... 2 * @size_x).collect { |x| (0 ... 2 * @size_y).collect { |y| [0,1].product([0,1]).each {
+      |a,b| safe_noise_set(tab, 2 * (x - half_x) + a, 2 * (y - half_y) + b, safe_noise_test(noise, x, y))
     }}}
     return tab
   end

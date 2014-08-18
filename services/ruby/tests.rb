@@ -38,7 +38,13 @@ RSpec.describe ShapeGenerator do
 
   it "scale_noise_table" do
     t = ShapeGeneratorTest.new
-    expect(t.testgen.scale_noise_table(t.testnoisetab)).to eq([[324, 324, 628], [324, 324, 628], [98, 98, 882], [98, 98, 882]])
+    expect(t.testgen.scale_noise_table([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])).to eq(
+      [[882, 882, 901], [882, 882, 901], [552, 552, 81], [552, 552, 81]]
+    )
+    s = ShapeGenerator.new(3, 4)
+    expect(s.scale_noise_table([[324, 628, 198, 98], [882, 901, 336, 552], [81, 479, 290, 70]])).to eq(
+      [[901, 901, 336, 336], [901, 901, 336, 336], [479, 479, 290, 290]]
+    )
   end
 
   it "safe_noise_test" do
