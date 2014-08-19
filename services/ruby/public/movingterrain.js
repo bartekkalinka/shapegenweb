@@ -1,7 +1,8 @@
 $(document).ready(function() {
 	var glob = {
 		tilesize : 6,
-		shapeData : {}
+		shapeData : {},
+		size : 50
 	};
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
@@ -9,24 +10,34 @@ $(document).ready(function() {
 	$('#btnGen').click(function() {
 		getAjaxShape();
 	});
-	$('#btnLoop').click(function() {
-		autoLoop();
+	$('#btnShift').click(function() {
+		shiftAndGenerate();
 	});
-	$('#btnZoomIn').click(function() {
-		glob.tilesize = glob.tilesize * 1.2;
-		drawShape();
-	});
-	$('#btnZoomOut').click(function() {
-		glob.tilesize = glob.tilesize / 1.2;		
-		drawShape();
-	});
-	
+
 	function getAjaxShape() {
-		var sizex = $('#sizex').val();
-		var sizey = $('#sizey').val();
-		$.getJSON("/shapegenweb/generate", { "sizex":sizex, "sizey":sizey, "iter":3, "cutoff":"false"}, function(returnedData) {
+		$.getJSON("/shapegenweb/generate", { "sizex":glob.size, "sizey":glob.size, "iter":3, "cutoff":"false" }, function(returnedData) {
 			glob.shapeData = returnedData;
 			drawShape();
+		});
+	}
+
+	function shiftAndGenerate() {
+		var DataToSend = new Object();
+		DataToSend = { "sizex":glob.size, "sizey":glob.size, "basenoise":glob.shapeData.basenoise, "iter":3, "cutoff":"false" };
+
+		$.ajax({
+			type: "PUT",
+			contentType: "application/json; charset=utf-8",
+			url: '/shapegen/shift_and_generate',
+			data: JSON.stringify(DataToSend),
+			dataType: "json",
+			success: function(returnedData) {
+				glob.shapeData = returnedData;
+				drawShape();
+			},
+			error: function (err){
+				alert('Error: ' + err);
+			}
 		});
 	}
 	
@@ -55,8 +66,4 @@ $(document).ready(function() {
 		}		
 	}
 
-	function autoLoop() {
-		getAjaxShape();
-		window.setTimeout(autoLoop, 500);	
-	}	
 });
