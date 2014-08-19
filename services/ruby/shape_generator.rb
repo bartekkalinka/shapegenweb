@@ -1,18 +1,9 @@
 class ShapeGenerator
 
-  attr_reader :size_x, :size_y, :shape, :debug_info
-
   # constructor, main loop of shape generation is here
   def initialize(size_x, size_y)
     @size_x = size_x
     @size_y = size_y
-  end
-
-  # checks if shape looks good with some "magic" stats limits
-  def fail_beauty_stats
-    w = weight(@shape)
-    s = @size_x * @size_y
-    return(w <= 6 or (w >= 7 and w <=12 and s >= 4 * w))
   end
 
   # returns noise table, that is: 2-dim. array with random numbers between 0 and 1000
@@ -139,14 +130,7 @@ class ShapeGenerator
       noise = get_smooth_noise_table(noise)
     }
     shape = render_shape_from_noise(noise)
-    @shape = (if cutoff then cutoff_loose_fragments(shape) else shape end)
-  end
-
-  # generate the shape until it passes arbitrary stats
-  def generate(iter, cutoff)
-    begin
-      generate_shape(iter, cutoff)
-    end while fail_beauty_stats
+    (if cutoff then cutoff_loose_fragments(shape) else shape end)
   end
 
 end
