@@ -122,15 +122,20 @@ class ShapeGenerator
     (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| ((noise[x][y]) >= 500) }}
   end
 
-  # generate shape by variation of 2-dimensional Perlin noise
-  def generate_shape(iter, cutoff)
-    noise = get_noise_table
+  def shape_from_basenoise(basenoise, iter, cutoff)
+    noise = basenoise
     iter.times {
       noise = scale_noise_table(noise)
       noise = get_smooth_noise_table(noise)
     }
     shape = render_shape_from_noise(noise)
-    (if cutoff then cutoff_loose_fragments(shape) else shape end)
+    shape = (if cutoff then cutoff_loose_fragments(shape) else shape end)
+  end
+
+  def generate_shape(iter, cutoff)
+    basenoise = get_noise_table
+    shape = shape_from_basenoise(basenoise, iter, cutoff)
+    return shape, basenoise
   end
 
 end

@@ -116,11 +116,19 @@ RSpec.describe ShapeGenerator do
     )
   end
 
+  it "shape_from_basenoise" do
+    s = ShapeGenerator.new(4, 3)
+    expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, true)).to eq(
+      [[true,true,false],[true,true,true],[false,false,false],[false,false,false]]
+    )
+  end
+
   it "generate_shape" do
     t = ShapeGeneratorTest.new
-    testshape = t.testgen.generate_shape(1, true)
-    expect(testshape.length).to eq(4)
-    expect(testshape.index { |col| col.length != 3 }).to eq(nil)
+    t.testgen.generate_shape(1, true).each { |result_tab|
+      expect(result_tab.length).to eq(4)
+      expect(result_tab.index { |col| col.length != 3 }).to eq(nil)
+    }
   end
 end
 

@@ -9,8 +9,8 @@ get '/shapegenweb/generate' do
   if params['iter'] == nil then iter = 1 else iter = params['iter'].to_i end
   cutoff = (params['cutoff'] == nil)
   gen = ShapeGenerator.new(sizex, sizey)
-  shape = gen.generate_shape(iter, cutoff)
-  json = { :shape => shape, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff}
+  shape, basenoise = gen.generate_shape(iter, cutoff)
+  json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff}
   Yajl::Encoder.encode(json)
 end
 
