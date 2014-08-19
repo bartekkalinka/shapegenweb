@@ -58,6 +58,12 @@ RSpec.describe ShapeGenerator do
     expect(t.testgen.get_smooth_noise_table(t.testnoisetab)).to eq([[226, 393, 294], [289, 549, 442], [297, 431, 282], [231, 234, 97]])
   end
 
+  it "shift_and_generate_noise" do
+    s = ShapeGenerator.new(4, 3)
+    expect(s.shift_and_generate_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])[0...3]).to eq(
+      [[98, 882, 901], [336, 552, 81], [479, 290, 70]])
+  end
+
   it "build_empty_shape" do
     t = ShapeGeneratorTest.new
     expect(t.testgen.build_empty_shape.flatten.index { |elem| elem != false }).to eq(nil)
@@ -121,6 +127,9 @@ RSpec.describe ShapeGenerator do
     expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, true)).to eq(
       [[true,true,false],[true,true,true],[false,false,false],[false,false,false]]
     )
+    expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, false)).to eq(
+      [[true,true,false],[true,true,true],[false,false,false],[false,false,false]]
+    )
   end
 
   it "generate_shape" do
@@ -129,6 +138,13 @@ RSpec.describe ShapeGenerator do
       expect(result_tab.length).to eq(4)
       expect(result_tab.index { |col| col.length != 3 }).to eq(nil)
     }
+  end
+
+  it "shift_and_generate" do
+    s = ShapeGenerator.new(4, 3)
+    shape, basenoise = s.shift_and_generate([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, false)
+    expect(shape[0...2]).to eq([[false,false,false],[false,false,false]])
+    expect(basenoise[0...3]).to eq([[209,944,801],[108,79,418],[581,486,932]])
   end
 end
 

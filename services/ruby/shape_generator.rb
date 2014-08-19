@@ -48,6 +48,12 @@ class ShapeGenerator
     }}
   end
 
+  def shift_and_generate_noise(noise)
+    noise.shift
+    return noise + ((0 ... @size_y).collect { |y| rand(1000) })
+  end
+
+
   # get standard-size table filled with false values
   def build_empty_shape
     (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| false }}
@@ -134,6 +140,13 @@ class ShapeGenerator
 
   def generate_shape(iter, cutoff)
     basenoise = get_noise_table
+    shape = shape_from_basenoise(basenoise, iter, cutoff)
+    return shape, basenoise
+  end
+
+
+  def shift_and_generate(basenoise, iter, cutoff)
+    basenoise = shift_and_generate_noise(basenoise)
     shape = shape_from_basenoise(basenoise, iter, cutoff)
     return shape, basenoise
   end
