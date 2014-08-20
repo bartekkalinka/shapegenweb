@@ -50,12 +50,12 @@ RSpec.describe ShapeGenerator do
   it "safe_noise_test" do
     t = ShapeGeneratorTest.new
     expect(t.testgen.safe_noise_test(t.testnoisetab, 3, 2)).to eq(70)
-    expect(t.testgen.safe_noise_test(t.testnoisetab, 20, 4)).to eq(0)
+    expect(t.testgen.safe_noise_test(t.testnoisetab, 20, 4)).to eq(500)
   end
 
   it "get_smooth_noise_table" do
     t = ShapeGeneratorTest.new
-    expect(t.testgen.get_smooth_noise_table(t.testnoisetab)).to eq([[226, 393, 294], [289, 549, 442], [297, 431, 282], [231, 234, 97]])
+    expect(t.testgen.get_smooth_noise_table(t.testnoisetab)).to eq([[443, 517, 511], [413, 549, 566], [421, 431, 406], [448, 358, 314]])
   end
 
   it "shift_and_generate_noise" do
@@ -126,10 +126,10 @@ RSpec.describe ShapeGenerator do
   it "shape_from_basenoise" do
     s = ShapeGenerator.new(4, 3)
     expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, true)).to eq(
-      [[true,true,false],[true,true,true],[false,false,false],[false,false,false]]
+      [[true,true,true],[true,true,true],[false,false,false],[false,false,false]]
     )
     expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, false)).to eq(
-      [[true,true,false],[true,true,true],[false,false,false],[false,false,false]]
+      [[true,true,true],[true,true,true],[false,false,false],[false,false,false]]
     )
   end
 

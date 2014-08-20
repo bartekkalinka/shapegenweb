@@ -36,7 +36,7 @@ class ShapeGenerator
 
   # get value noise[x][y] without exception if x, y are out of bounds (0 instead)
   def safe_noise_test(noise, x, y)
-    if((0...@size_x).include?(x) and (0...@size_y).include?(y)) then noise[x][y] else 0 end
+    if((0...@size_x).include?(x) and (0...@size_y).include?(y)) then noise[x][y] else 500 end
   end
 
   # do "smoothing" step on noise table
