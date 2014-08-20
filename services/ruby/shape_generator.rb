@@ -50,7 +50,7 @@ class ShapeGenerator
 
   def shift_and_generate_noise(noise)
     noise.shift
-    return noise + ((0 ... @size_y).collect { |y| rand(1000) })
+    return noise << ((0 ... @size_y).collect { |y| rand(1000) })
   end
 
 

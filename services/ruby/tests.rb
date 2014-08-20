@@ -60,8 +60,9 @@ RSpec.describe ShapeGenerator do
 
   it "shift_and_generate_noise" do
     s = ShapeGenerator.new(4, 3)
-    expect(s.shift_and_generate_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])[0...3]).to eq(
-      [[98, 882, 901], [336, 552, 81], [479, 290, 70]])
+    testresult = s.shift_and_generate_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])
+    expect(testresult[0...3]).to eq([[98, 882, 901], [336, 552, 81], [479, 290, 70]])
+    expect(testresult.length).to eq(4)
   end
 
   it "build_empty_shape" do
