@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	var glob = {
-		tilesize : 6,
+		tilesize : 12,
 		shapeData : {},
 		size : 50
 	};
@@ -12,6 +12,9 @@ $(document).ready(function() {
 	});
 	$('#btnShift').click(function() {
 		shiftAndGenerate();
+	});
+	$('#btnLoop').click(function() {
+		autoLoop();
 	});
 
 	function getAjaxShape() {
@@ -65,5 +68,10 @@ $(document).ready(function() {
 		  }
 		}		
 	}
+
+	function autoLoop() {
+		shiftAndGenerate();
+		window.setTimeout(autoLoop, 500);	
+	}	
 
 });
