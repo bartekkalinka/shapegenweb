@@ -14,7 +14,7 @@ class ShapeGenerator
   # sets noise table value for x, y in boundaries [0, @size>
   # does nothing for x, y outside of boundaries
   def safe_noise_set(noise, x, y, value)
-    if((0...@size_x).include?(x) and (0...@size_y).include?(y)) then noise[x][y] = value end
+    if((0...noise.length).include?(x) and (0...noise[0].length).include?(y)) then noise[x][y] = value end
   end
 
   # prepare table filled with 0s
@@ -26,9 +26,9 @@ class ShapeGenerator
   # fitting in table of same size
   # so effectively: 1/4th of 2 * noise
   def scale_noise_table(noise)
-    half_x, half_y = [@size_x, @size_y].collect { |a| (a / 2).ceil + (a % 2) - 1 }
+    half_x, half_y = [noise.length, noise[0].length].collect { |a| (a / 2).ceil + (a % 2) - 1 }
     tab = get_zeros_table
-    (0 ... 2 * @size_x).collect { |x| (0 ... 2 * @size_y).collect { |y| [0,1].product([0,1]).each {
+    (0 ... 2 * noise.length).collect { |x| (0 ... 2 * noise[0].length).collect { |y| [0,1].product([0,1]).each {
       |a,b| safe_noise_set(tab, 2 * (x - half_x) + a, 2 * (y - half_y) + b, safe_noise_test(noise, x, y))
     }}}
     return tab
@@ -36,21 +36,21 @@ class ShapeGenerator
 
   # get value noise[x][y] without exception if x, y are out of bounds (0 instead)
   def safe_noise_test(noise, x, y)
-    if((0...@size_x).include?(x) and (0...@size_y).include?(y)) then noise[x][y] else 500 end
+    if((0...noise.length).include?(x) and (0...noise[0].length).include?(y)) then noise[x][y] else 500 end
   end
 
   # do "smoothing" step on noise table
   # "smoothing" is averaging the values of a position and surrounding positions in the table
   # with weights: center as 1/4, sides (N, E, S, W) as 1/8 each, corners (NE, NW, SE, SW) as 1/16 each
   def get_smooth_noise_table(noise)
-    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| 
+    (0 ... noise.length).collect { |x| (0 ... noise[0].length).collect { |y| 
       ([-1,0,1].product([-1,0,1]).inject(0) { |sum, d| sum + safe_noise_test(noise, x + d[0], y + d[1]) / (2 ** (d[0].abs + d[1].abs + 2)) })
     }}
   end
 
   def shift_and_generate_noise(noise)
     noise.shift
-    return noise << ((0 ... @size_y).collect { |y| rand(1000) })
+    return noise << ((0 ... noise[0].length).collect { |y| rand(1000) })
   end
 
 
@@ -71,19 +71,19 @@ class ShapeGenerator
   
   # find first true value in a shape table
   def find_first_point(shape)
-    searchtab = (0...@size_x).collect { |x| shape[x].index {|elem| elem} }
+    searchtab = (0...shape.length).collect { |x| shape[x].index {|elem| elem} }
     i = searchtab.index {|elem| elem!=nil}
     if(i) then [i, searchtab[i]] else nil end
   end
 
   # from_shape - sub_shape
   def substract_shape(from_shape, sub_shape)
-    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| from_shape[x][y] and not sub_shape[x][y] }}
+    (0 ... from_shape.length).collect { |x| (0 ... from_shape[0].length).collect { |y| from_shape[x][y] and not sub_shape[x][y] }}
   end
 
   # [true/false/nil] table -> [true/false] table
   def denil_chunk(chunk)
-    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| ![false,nil].include?(chunk[x][y]) }}
+    (0 ... chunk.length).collect { |x| (0 ... chunk[0].length).collect { |y| ![false,nil].include?(chunk[x][y]) }}
   end
 
   # recursive whole shape extracting
@@ -91,7 +91,7 @@ class ShapeGenerator
   # map_shape - input nil-shape (possibly consisting of many separate whole shapes)
   # x, y - current position of processing
   def get_whole_shape(curr_chunk, map_shape, x, y)
-    if((0...@size_x).include?(x) and (0...@size_y).include?(y))
+    if((0...curr_chunk.length).include?(x) and (0...curr_chunk[0].length).include?(y))
       if(curr_chunk[x][y] == nil)
         if(curr_chunk[x][y] = map_shape[x][y])
           [-1,0,1].product([-1,0,1]).each { |d| get_whole_shape(curr_chunk, map_shape, x + d[0], y + d[1]) }
@@ -125,7 +125,7 @@ class ShapeGenerator
 
   # noise table -> shape
   def render_shape_from_noise(noise)
-    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| ((noise[x][y]) >= 500) }}
+    (0 ... noise.length).collect { |x| (0 ... noise[0].length).collect { |y| ((noise[x][y]) >= 500) }}
   end
 
   def shape_from_basenoise(basenoise, iter, cutoff)
