@@ -1,19 +1,5 @@
 require './shape_generator'
 
-class ShapeGeneratorTest
-  attr_reader :testgen, :testnoisetab, :testshapetab, :testnilshapetab, :testchunkstab, :testemptyshape
-
-  def initialize
-    @testgen = ShapeGenerator.new
-    @testnoisetab = [[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]]
-    @testshapetab = [[false, true, true], [true, true, false], [false, true, false], [false, true, false]]
-    @testnilshapetab = [[nil, true, true], [true, true, false], [false, true, nil], [nil, true, false]]
-    @testchunkstab = [[false, true, true], [false, false, false], [false, false, true], [false, true, true]]
-    @testemptyshape = [[false, false, false], [false, false, false], [false, false, false], [false, false, false]]
-  end
-
-end
-
 RSpec.describe ShapeGenerator do
 
   it "get_noise_table" do
@@ -68,14 +54,15 @@ RSpec.describe ShapeGenerator do
   end
 
   it "safe_noise_test" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.safe_noise_test(t.testnoisetab, 3, 2)).to eq(70)
-    expect(t.testgen.safe_noise_test(t.testnoisetab, 20, 4)).to eq(500)
+    s = ShapeGenerator.new
+    expect(s.safe_noise_test([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]], 3, 2)).to eq(70)
+    expect(s.safe_noise_test([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]], 20, 4)).to eq(500)
   end
 
   it "get_smooth_noise_table" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.get_smooth_noise_table(t.testnoisetab)).to eq([[443, 517, 511], [413, 549, 566], [421, 431, 406], [448, 358, 314]])
+    s = ShapeGenerator.new
+    expect(s.get_smooth_noise_table([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])).to eq(
+      [[443, 517, 511], [413, 549, 566], [421, 431, 406], [448, 358, 314]])
   end
 
   it "shift_and_generate_noise" do
@@ -94,49 +81,55 @@ RSpec.describe ShapeGenerator do
   end
 
   it "weight" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.weight(t.testshapetab)).to eq(6)
+    s = ShapeGenerator.new
+    expect(s.weight([[false, true, true], [true, true, false], [false, true, false], [false, true, false]])).to eq(6)
   end
 
   it "find_first_point" do
-    t = ShapeGeneratorTest.new
-    x, y = t.testgen.find_first_point(t.testshapetab)
-    expect(t.testshapetab[x][y]).to eq(true)
+    s = ShapeGenerator.new
+    x, y = s.find_first_point([[false, true, true], [true, true, false], [false, true, false], [false, true, false]])
+    expect(([[false, true, true], [true, true, false], [false, true, false], [false, true, false]])[x][y]).to eq(true)
   end
 
   it "substract_shape" do
-    t = ShapeGeneratorTest.new
+    s = ShapeGenerator.new
     subshapetab = [[false, true, false], [true, false, false], [false, true, false], [false, true, false]]
-    expect(t.testgen.substract_shape(t.testshapetab, subshapetab)).to eq( 
+    expect(s.substract_shape([[false, true, true], [true, true, false], [false, true, false], [false, true, false]], 
+      subshapetab)).to eq( 
       [[false, false, true], [false, true, false], [false, false, false], [false, false, false]])
   end
 
   it "denil_chunk" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.denil_chunk(t.testnilshapetab)).to eq(t.testshapetab)
+    s = ShapeGenerator.new
+    expect(s.denil_chunk([[nil, true, true], [true, true, false], [false, true, nil], [nil, true, false]])).to eq(
+      [[false, true, true], [true, true, false], [false, true, false], [false, true, false]])
   end
 
   it "divide_into_whole_shapes" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.divide_into_whole_shapes(t.testchunkstab)).to eq(
+    s = ShapeGenerator.new
+    expect(s.divide_into_whole_shapes(
+      [[false, true, true], [false, false, false], [false, false, true], [false, true, true]])).to eq(
       [[[false, true, true], [false, false, false], [false, false, false], [false, false, false]],
        [[false, false, false], [false, false, false], [false, false, true], [false, true, true]],
-       t.testemptyshape]
+       [[false, false, false], [false, false, false], [false, false, false], [false, false, false]]]
     )
   end
 
   it "cutoff_loose_fragments" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.cutoff_loose_fragments(t.testchunkstab)).to eq(
+    s = ShapeGenerator.new
+    expect(s.cutoff_loose_fragments(
+    [[false, true, true], [false, false, false], [false, false, true], [false, true, true]])).to eq(
       [[false, false, false], [false, false, false], [false, false, true], [false, true, true]]
     )
     # empty shape -> empty shape
-    expect(t.testgen.cutoff_loose_fragments(t.testemptyshape)).to eq(t.testemptyshape)
+    expect(s.cutoff_loose_fragments(
+    [[false, false, false], [false, false, false], [false, false, false], [false, false, false]])).to eq(
+    [[false, false, false], [false, false, false], [false, false, false], [false, false, false]])
   end
 
   it "render_shape_from_noise" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.render_shape_from_noise(t.testnoisetab)).to eq(
+    s = ShapeGenerator.new
+    expect(s.render_shape_from_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])).to eq(
       [[false, true, false], [false, true, true], [false, true, false], [false, false, false]]
     )
   end
