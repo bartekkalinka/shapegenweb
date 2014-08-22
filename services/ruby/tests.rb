@@ -4,7 +4,7 @@ class ShapeGeneratorTest
   attr_reader :testgen, :testnoisetab, :testshapetab, :testnilshapetab, :testchunkstab, :testemptyshape
 
   def initialize
-    @testgen = ShapeGenerator.new(4, 3)
+    @testgen = ShapeGenerator.new
     @testnoisetab = [[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]]
     @testshapetab = [[false, true, true], [true, true, false], [false, true, false], [false, true, false]]
     @testnilshapetab = [[nil, true, true], [true, true, false], [false, true, nil], [nil, true, false]]
@@ -17,31 +17,51 @@ end
 RSpec.describe ShapeGenerator do
 
   it "get_noise_table" do
-    t = ShapeGeneratorTest.new
-    testnewnoisetab = t.testgen.get_noise_table
+    s = ShapeGenerator.new
+    testnewnoisetab = s.get_noise_table(4, 3)
     expect(testnewnoisetab.length).to eq(4)
     expect(testnewnoisetab.index { |col| col.length != 3 }).to eq(nil)
     expect(testnewnoisetab.flatten.index { |elem| elem < 0 or elem > 1000 }).to eq(nil)
   end
 
   it "safe_noise_set" do
-    t = ShapeGeneratorTest.new
-    t.testgen.safe_noise_set(t.testnoisetab, 3, 2, 78)
-    expect(t.testnoisetab[3][2]).to eq(78)
-    t.testgen.safe_noise_set(t.testnoisetab, 20, 4, 78) # no error -> test passed
+    s = ShapeGenerator.new
+    testnoise = [[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]]
+    s.safe_noise_set(testnoise, 3, 2, 78)
+    expect(testnoise[3][2]).to eq(78)
+    s.safe_noise_set(testnoise, 20, 4, 78) # no error -> test passed
   end
 
   it "get_zeros_table" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.get_zeros_table.flatten.index { |elem| elem != 0 }).to eq(nil)
+    s = ShapeGenerator.new
+    testnewnoisetab = s.get_zeros_table(4, 3)
+    expect(testnewnoisetab.length).to eq(4)
+    expect(testnewnoisetab.index { |col| col.length != 3 }).to eq(nil)
+    expect(testnewnoisetab.flatten.index { |elem| elem != 0 }).to eq(nil)
+  end
+
+  it "add_margin" do
+    s = ShapeGenerator.new
+    expect(s.add_margin([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])).to eq(
+      [[500, 500, 500, 500, 500], [500, 324, 628, 198, 500], [500, 98, 882, 901, 500], [500, 336, 552, 81, 500], 
+       [500, 479, 290, 70, 500], [500, 500, 500, 500, 500]]
+    )
+  end
+
+  it "cut_margin" do
+    s = ShapeGenerator.new
+    expect(s.cut_margin([[500, 500, 500, 500, 500], [500, 324, 628, 198, 500], [500, 98, 882, 901, 500], 
+                         [500, 336, 552, 81, 500], [500, 479, 290, 70, 500], [500, 500, 500, 500, 500]])).to eq(
+      [[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]]
+    )
   end
 
   it "scale_noise_table" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.scale_noise_table([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])).to eq(
+    s = ShapeGenerator.new
+    expect(s.scale_noise_table([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])).to eq(
       [[882, 882, 901], [882, 882, 901], [552, 552, 81], [552, 552, 81]]
     )
-    s = ShapeGenerator.new(3, 4)
+    s = ShapeGenerator.new
     expect(s.scale_noise_table([[324, 628, 198, 98], [882, 901, 336, 552], [81, 479, 290, 70]])).to eq(
       [[901, 901, 336, 336], [901, 901, 336, 336], [479, 479, 290, 290]]
     )
@@ -59,20 +79,18 @@ RSpec.describe ShapeGenerator do
   end
 
   it "shift_and_generate_noise" do
-    s = ShapeGenerator.new(4, 3)
+    s = ShapeGenerator.new
     testresult = s.shift_and_generate_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])
     expect(testresult[0...3]).to eq([[98, 882, 901], [336, 552, 81], [479, 290, 70]])
     expect(testresult.length).to eq(4)
   end
 
-  it "build_empty_shape" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.build_empty_shape.flatten.index { |elem| elem != false }).to eq(nil)
-  end
-
   it "build_empty_shape_nil" do
-    t = ShapeGeneratorTest.new
-    expect(t.testgen.build_empty_shape_nil.flatten.index { |elem| elem != nil }).to eq(nil)
+    s = ShapeGenerator.new
+    testtab = s.build_empty_shape_nil(4, 3)
+    expect(testtab.length).to eq(4)
+    expect(testtab.index { |col| col.length != 3 }).to eq(nil)
+    expect(testtab.flatten.index { |elem| elem != nil }).to eq(nil)
   end
 
   it "weight" do
@@ -124,27 +142,27 @@ RSpec.describe ShapeGenerator do
   end
 
   it "shape_from_basenoise" do
-    s = ShapeGenerator.new(4, 3)
+    s = ShapeGenerator.new
     expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, true)).to eq(
-      [[true,true,true],[true,true,true],[false,false,false],[false,false,false]]
+      [[true, true, true], [false, false, true], [false, false, true], [false, true, true]]
     )
     expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, false)).to eq(
-      [[true,true,true],[true,true,true],[false,false,false],[false,false,false]]
+      [[true, true, true], [false, false, true], [false, false, true], [false, true, true]]
     )
   end
 
   it "generate_shape" do
-    t = ShapeGeneratorTest.new
-    t.testgen.generate_shape(1, true).each { |result_tab|
+    s = ShapeGenerator.new
+    s.generate_shape(4, 3, 1, true).each { |result_tab|
       expect(result_tab.length).to eq(4)
       expect(result_tab.index { |col| col.length != 3 }).to eq(nil)
     }
   end
 
   it "shift_and_generate" do
-    s = ShapeGenerator.new(4, 3)
+    s = ShapeGenerator.new
     shape, basenoise = s.shift_and_generate([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, false)
-    expect(shape[0...2]).to eq([[false,false,false],[false,false,false]])
+    expect(shape[0...2]).to eq([[false, false, true], [false, true, true]])
     expect(basenoise[0...3]).to eq([[209,944,801],[108,79,418],[581,486,932]])
   end
 end

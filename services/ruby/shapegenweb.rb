@@ -13,8 +13,8 @@ end
 
 get '/shapegenweb/generate' do
   sizex, sizey, iter, cutoff = standardparams(params)
-  gen = ShapeGenerator.new(sizex, sizey)
-  shape, basenoise = gen.generate_shape(iter, cutoff)
+  gen = ShapeGenerator.new
+  shape, basenoise = gen.generate_shape(sizex, sizey, iter, cutoff)
   json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff}
   Yajl::Encoder.encode(json)
 end
@@ -24,7 +24,7 @@ put '/shapegen/shift_and_generate' do
   params = parser.parse(request.body.read)
   sizex, sizey, iter, cutoff = standardparams(params)
   basenoise = params['basenoise']
-  gen = ShapeGenerator.new(sizex, sizey)
+  gen = ShapeGenerator.new
   shape, basenoise = gen.shift_and_generate(basenoise, iter, cutoff)
   json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff}
   Yajl::Encoder.encode(json)

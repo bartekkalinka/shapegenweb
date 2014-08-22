@@ -1,14 +1,8 @@
 class ShapeGenerator
 
-  # constructor, main loop of shape generation is here
-  def initialize(size_x, size_y)
-    @size_x = size_x
-    @size_y = size_y
-  end
-
   # returns noise table, that is: 2-dim. array with random numbers between 0 and 1000
-  def get_noise_table()
-    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| rand(1000) }}
+  def get_noise_table(size_x, size_y)
+    (0 ... size_x).collect { |x| (0 ... size_y).collect { |y| rand(1000) }}
   end
 
   # sets noise table value for x, y in boundaries [0, @size>
@@ -18,8 +12,20 @@ class ShapeGenerator
   end
 
   # prepare table filled with 0s
-  def get_zeros_table()
-    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| 0 }}
+  def get_zeros_table(size_x, size_y)
+    (0 ... size_x).collect { |x| (0 ... size_y).collect { |y| 0 }}
+  end
+
+  # surround a noise table with zeros
+  # size x, y -> size x + 2, y + 2
+  def add_margin(noise)
+    (0 ... noise.length + 2).collect { |x| (0 ... noise[0].length + 2).collect { |y| safe_noise_test(noise, x - 1, y - 1) }}
+  end
+
+  # cut margins
+  # size x + 2, y + 2 -> x, y
+  def cut_margin(noise)
+    (0 ... noise.length - 2).collect { |x| (0 ... noise[0].length - 2).collect { |y| noise[x + 1][y + 1] }}
   end
 
   # table noise -> 2 * noise
@@ -27,7 +33,7 @@ class ShapeGenerator
   # so effectively: 1/4th of 2 * noise
   def scale_noise_table(noise)
     half_x, half_y = [noise.length, noise[0].length].collect { |a| (a / 2).ceil + (a % 2) - 1 }
-    tab = get_zeros_table
+    tab = get_zeros_table(noise.length, noise[0].length) # TODO less of this: noise.length, noise[0].length
     (0 ... 2 * noise.length).collect { |x| (0 ... 2 * noise[0].length).collect { |y| [0,1].product([0,1]).each {
       |a,b| safe_noise_set(tab, 2 * (x - half_x) + a, 2 * (y - half_y) + b, safe_noise_test(noise, x, y))
     }}}
@@ -53,15 +59,9 @@ class ShapeGenerator
     return noise << ((0 ... noise[0].length).collect { |y| rand(1000) })
   end
 
-
-  # get standard-size table filled with false values
-  def build_empty_shape
-    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| false }}
-  end
-
   # get standard-size table filled with nil values
-  def build_empty_shape_nil
-    (0 ... @size_x).collect { |x| (0 ... @size_y).collect { |y| nil }}
+  def build_empty_shape_nil(size_x, size_y)
+    (0 ... size_x).collect { |x| (0 ... size_y).collect { |y| nil }}
   end
 
   # weight: number of true values in a table
@@ -108,7 +108,7 @@ class ShapeGenerator
     chunks = []
     while(weight(left_over) > 0)
       x, y = find_first_point(left_over)
-      chunk = build_empty_shape_nil()
+      chunk = build_empty_shape_nil(shape.length, shape[0].length)
       get_whole_shape(chunk, left_over, x, y)
       chunks << denil_chunk(chunk)
       left_over = substract_shape(left_over, chunk)
@@ -131,15 +131,15 @@ class ShapeGenerator
   def shape_from_basenoise(basenoise, iter, cutoff)
     noise = basenoise
     iter.times {
-      noise = scale_noise_table(noise)
-      noise = get_smooth_noise_table(noise)
+      noise = scale_noise_table(add_margin(noise))
+      noise = cut_margin(get_smooth_noise_table(noise))
     }
     shape = render_shape_from_noise(noise)
     shape = (if cutoff then cutoff_loose_fragments(shape) else shape end)
   end
 
-  def generate_shape(iter, cutoff)
-    basenoise = get_noise_table
+  def generate_shape(size_x, size_y, iter, cutoff)
+    basenoise = get_noise_table(size_x, size_y)
     shape = shape_from_basenoise(basenoise, iter, cutoff)
     return shape, basenoise
   end
