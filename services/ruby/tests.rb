@@ -67,9 +67,16 @@ RSpec.describe ShapeGenerator do
 
   it "shift_and_generate_noise" do
     s = ShapeGenerator.new
-    testresult = s.shift_and_generate_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])
+    testresult = s.shift_and_generate_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]], :E)
     expect(testresult[0...3]).to eq([[98, 882, 901], [336, 552, 81], [479, 290, 70]])
     expect(testresult.length).to eq(4)
+    testresult = s.shift_and_generate_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]], :W)
+    expect(testresult[1...4]).to eq([[324, 628, 198], [98, 882, 901], [336, 552, 81]])
+    expect(testresult.length).to eq(4)
+    testresult = s.shift_and_generate_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]], :N)
+    expect(testresult.collect { |col| col[1...3] }).to eq([[324, 628], [98, 882], [336, 552], [479, 290]])
+    testresult = s.shift_and_generate_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]], :S)
+    expect(testresult.collect { |col| col[0...2] }).to eq([[628, 198], [882, 901], [552, 81], [290, 70]])
   end
 
   it "build_empty_shape_nil" do
@@ -154,7 +161,7 @@ RSpec.describe ShapeGenerator do
 
   it "shift_and_generate" do
     s = ShapeGenerator.new
-    shape, basenoise = s.shift_and_generate([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, false)
+    shape, basenoise = s.shift_and_generate([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], :E, 1, false)
     expect(shape[0...2]).to eq([[false, false, true], [false, true, true]])
     expect(basenoise[0...3]).to eq([[209,944,801],[108,79,418],[581,486,932]])
   end

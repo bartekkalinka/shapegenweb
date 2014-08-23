@@ -23,9 +23,10 @@ put '/shapegen/shift_and_generate' do
   parser = Yajl::Parser.new
   params = parser.parse(request.body.read)
   sizex, sizey, iter, cutoff = standardparams(params)
+  direction = params['direction']
   basenoise = params['basenoise']
   gen = ShapeGenerator.new
-  shape, basenoise = gen.shift_and_generate(basenoise, iter, cutoff)
+  shape, basenoise = gen.shift_and_generate(basenoise, direction.to_sym, iter, cutoff)
   json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff}
   Yajl::Encoder.encode(json)
 end

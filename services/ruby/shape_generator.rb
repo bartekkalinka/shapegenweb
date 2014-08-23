@@ -54,9 +54,17 @@ class ShapeGenerator
     }}
   end
 
-  def shift_and_generate_noise(noise)
-    noise.shift
-    return noise << ((0 ... noise[0].length).collect { |y| rand(1000) })
+  def shift_and_generate_noise(noise, direction)
+    case direction
+    when :E
+      return noise[1...noise.length] + [noise[0].collect { |col| rand(1000) }]
+    when :W
+      return [noise[0].collect { |col| rand(1000) }] + noise[0...noise.length-1]
+    when :N
+      return (noise.collect { |col| [rand(1000)] + col[0...noise[0].length-1]})
+    when :S
+      return (noise.collect { |col| col[1...noise[0].length] + [rand(1000)]})
+    end
   end
 
   # get standard-size table filled with nil values
@@ -145,8 +153,8 @@ class ShapeGenerator
   end
 
 
-  def shift_and_generate(basenoise, iter, cutoff)
-    basenoise = shift_and_generate_noise(basenoise)
+  def shift_and_generate(basenoise, direction, iter, cutoff)
+    basenoise = shift_and_generate_noise(basenoise, direction)
     shape = shape_from_basenoise(basenoise, iter, cutoff)
     return shape, basenoise
   end

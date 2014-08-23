@@ -7,15 +7,35 @@ $(document).ready(function() {
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
 	clearCanvas();
-	$('#btnGen').click(function() {
-		getAjaxShape();
-	});
-	$('#btnShift').click(function() {
-		shiftAndGenerate();
-	});
-	$('#btnLoop').click(function() {
-		autoLoop();
-	});
+	getAjaxShape();
+
+	window.addEventListener( "keydown", doKeyDown, true);
+
+	function doKeyDown(e) {
+		var direction = "";
+
+		switch (e.keyCode)
+		{
+		case 37:
+		    direction = "W";
+			break;
+		case 38:
+			direction = "N";
+			break;
+		case 39:
+			direction = "E";
+			break;
+		case 40:
+			direction = "S";
+			break;
+		}
+
+		if (direction != "")
+		{
+			$("#hint").hide();
+			shiftAndGenerate(direction)
+		}
+	}
 
 	function getAjaxShape() {
 		$.getJSON("/shapegenweb/generate", { "sizex":glob.size, "sizey":glob.size, "iter":3, "cutoff":"false" }, function(returnedData) {
@@ -24,9 +44,10 @@ $(document).ready(function() {
 		});
 	}
 
-	function shiftAndGenerate() {
+	function shiftAndGenerate(direction) {
 		var DataToSend = new Object();
-		DataToSend = { "sizex":glob.size, "sizey":glob.size, "basenoise":glob.shapeData.basenoise, "iter":3, "cutoff":"false" };
+		DataToSend = { "sizex":glob.size, "sizey":glob.size, "basenoise":glob.shapeData.basenoise, "direction":direction,
+			"iter":3, "cutoff":"false" };
 
 		$.ajax({
 			type: "PUT",
