@@ -2,12 +2,15 @@ $(document).ready(function() {
 	var glob = {
 		tilesize : 12,
 		shapeData : {},
-		size : 50
+		size : 50,
+		showTiming : true,
+		lastTime : (new Date()).getTime()
 	};
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
 	clearCanvas();
 	getAjaxShape();
+	$("#timing").hide();
 
 	window.addEventListener( "keydown", doKeyDown, true);
 
@@ -45,6 +48,8 @@ $(document).ready(function() {
 	}
 
 	function shiftAndGenerate(direction) {
+		startTiming();
+
 		var DataToSend = new Object();
 		DataToSend = { "sizex":glob.size, "sizey":glob.size, "basenoise":glob.shapeData.basenoise, "direction":direction,
 			"iter":3, "cutoff":"false" };
@@ -58,6 +63,7 @@ $(document).ready(function() {
 			success: function(returnedData) {
 				glob.shapeData = returnedData;
 				drawShape();
+				showTiming("shiftAndGenerate");
 			},
 			error: function (err){
 				alert('Error: ' + err);
@@ -93,6 +99,18 @@ $(document).ready(function() {
 	function autoLoop() {
 		shiftAndGenerate();
 		window.setTimeout(autoLoop, 500);	
-	}	
+	}
+
+	function startTiming() {
+		glob.startTime = (new Date()).getTime();
+	}
+
+	function showTiming(thingMeasured) {
+		if(glob.showTiming) {
+			$("#timing").show();
+			currTiming = (new Date()).getTime();
+			$("#timing").html(thingMeasured + " lasted " + (currTiming - glob.startTime) + " ms");
+		}
+	}
 
 });
