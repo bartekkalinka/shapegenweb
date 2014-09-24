@@ -1,20 +1,16 @@
 shapegenweb
 ===========
 
-Displaying tile shapes from shape generator on a webpage.
+Browsing through generated terrain on a webpage.
 
 Self-educational and recreational project.
 
 Shape generator originally comes from my [Clouds](https://github.com/bartekkalinka/clouds) game.
 
-Current services implementations: Java (Spring MVC), Ruby (Sinatra)
+Needs: ruby 2.0, sinatra, yajl (+ ruby dev kit on windows), rspec (for unit tests)
 
-Running instructions are in services folder subfolders.
+Run service: ruby shapegenweb.rb (turn off comodo autosandboxing if applicable)
 
-Default ports:
-- java app 8080
-- ruby app 4567
+Client url: http://localhost:4567/movingterrain.html
 
-Standard URLs:
-- default client url: http://localhost:xxxx/shapegenweb
-- generate webservice example call: http://localhost:xxxx/shapegenweb/generate?sizex=10&sizey=7
+Run tests: rspec tests.rb

@@ -1,45 +1,8 @@
-- [x] ruby & java versions unification
-  - [x] same urls for services and web client
-  - [x] common web client code
-    - [x] static html in java
-    - [x] common html + javascript code
-- [ ] web client development
-  - [ ] size fields
-    - [ ] smaller fields
-    - [ ] validation
-  - [x] better zoom (times factor instead of inc/decr.)
-  - [ ] stop for loop mode
-- [ ] java-specific
-  - [ ] actually use Spring injection and configuration for core components
-  - [ ] switch to Spring Boot
-  - [ ] switch to Gradle
-  - [ ] rewrite in Groovy (after ruby refactorization)
-    - [ ] unit tests in groovy
+- [ ] terrain generator
+  - [ ] better/smooth performance
+  - [ ] api based on coordinates + persistence
 - [ ] unit tests
-  - [ ] client code in ruby + java (consuming REST)
+  - [ ] client code in ruby (consuming REST)
   - [x] shape generator unit tests where possible
     - [x] any tests before refactorization
     - [x] use some testing framework
-- [ ] expand generate service
-  - [x] refactorization (start with ruby version)
-    - [x] shorter code (using ruby blocks)
-  - [ ] dividing shape generator into layers and classes
-  - [x] better tile shapes (more levels of noise)
-  - [ ] some joining mechanism for generating larger shapes in many turns
-  - [ ] ruby error when cutting off loose fragments on 50 x 50 with 3 noise levels: stack level too deep
-- [ ] mutating shapes service (post a shape, get a mutated shape)
-  - [ ] drawing shapes from client
-- [ ] shape generator -> terrain generator
-  - [ ] moving terrain page
-    - [ ] new client page with arrows control
-    - [ ] generating smooth continuation for current view
-      - [ ] generate service passing base noise table used for generation
-      - [ ] new service for generation + movement (noise table as parameter and result)
-  - [ ] persistence service for shapes
-  - [ ] placing shapes on a map
-- [ ] other kinds of shapes
-  - [ ] start with non-tile boundaries between two tile shapes
-  - [ ] converting tile shapes to polygons
-- [ ] implementations in other languages
-  - [ ] scala
-- [ ] text rendering as an alternative
