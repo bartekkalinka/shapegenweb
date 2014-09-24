@@ -31,13 +31,11 @@ put '/shapegen/shift_and_generate' do
   direction = params['direction']
   basenoise = params['basenoise']
   timingTab = params['timing']
-  timing_after_parse = timing
+  timingTab["server receive"] = timing_before
+  timingTab["server parse"] = timing
   gen = ShapeGenerator.new
   shape, basenoise = gen.shift_and_generate(basenoise, direction.to_sym, iter, cutoff)
-  timing_after = timing
-  timingTab["server receive"] = timing_before
-  timingTab["server parse"] = timing_after_parse
-  timingTab["server generate"] = timing_after
+  timingTab["server generate"] = timing
   json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff, :timing => timingTab }
   Yajl::Encoder.encode(json)
 end

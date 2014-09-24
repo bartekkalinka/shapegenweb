@@ -1,8 +1,12 @@
 - [ ] terrain generator
   - [ ] better/smooth performance
+    - [ ] better generator performance
   - [ ] api based on coordinates + persistence
 - [ ] unit tests
   - [ ] client code in ruby (consuming REST)
   - [x] shape generator unit tests where possible
     - [x] any tests before refactorization
     - [x] use some testing framework
+- [ ] project structure
+  - [ ] dividing javascript into modules
+  - [ ] more OO design in shape generator 
