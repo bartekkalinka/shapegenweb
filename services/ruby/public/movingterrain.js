@@ -4,7 +4,7 @@ $(document).ready(function() {
 		shapeData : {},
 		size : 50,
 		showTiming : true,
-		lastTime : (new Date()).getTime()
+		timingTab : {}
 	};
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
@@ -52,7 +52,7 @@ $(document).ready(function() {
 
 		var DataToSend = new Object();
 		DataToSend = { "sizex":glob.size, "sizey":glob.size, "basenoise":glob.shapeData.basenoise, "direction":direction,
-			"iter":3, "cutoff":"false" };
+			"iter":3, "cutoff":"false", "timing":glob.timingTab };
 
 		$.ajax({
 			type: "PUT",
@@ -63,7 +63,9 @@ $(document).ready(function() {
 			success: function(returnedData) {
 				glob.shapeData = returnedData;
 				drawShape();
-				showTiming("shiftAndGenerate");
+				glob.timingTab = returnedData.timing;
+				endTiming();
+				showTiming();
 			},
 			error: function (err){
 				alert('Error: ' + err);
@@ -102,14 +104,27 @@ $(document).ready(function() {
 	}
 
 	function startTiming() {
-		glob.startTime = (new Date()).getTime();
+		glob.timingTab["client start"] = (new Date()).getTime();
 	}
 
-	function showTiming(thingMeasured) {
+	function endTiming() {
+		glob.timingTab["client end"] = (new Date()).getTime();
+	}
+
+	function showTiming() {
+		var timingHtml = "";
+		var prevTiming = 0;
 		if(glob.showTiming) {
 			$("#timing").show();
-			currTiming = (new Date()).getTime();
-			$("#timing").html(thingMeasured + " lasted " + (currTiming - glob.startTime) + " ms");
+			for (var timing in glob.timingTab) {
+				if (glob.timingTab.hasOwnProperty(timing)) {
+					if(prevTiming != 0) {
+						timingHtml += (timing + "  " + (glob.timingTab[timing] - prevTiming) + " ms<br>");
+					}
+					prevTiming = glob.timingTab[timing];
+				}
+			}
+			$("#timing").html(timingHtml);
 		}
 	}
 

@@ -11,6 +11,10 @@ def standardparams(params)
   return sizex, sizey, iter, cutoff
 end
 
+def timing
+  (Time.now.to_f * 1000).floor
+end
+
 get '/shapegenweb/generate' do
   sizex, sizey, iter, cutoff = standardparams(params)
   gen = ShapeGenerator.new
@@ -20,14 +24,21 @@ get '/shapegenweb/generate' do
 end
 
 put '/shapegen/shift_and_generate' do
+  timing_before = timing
   parser = Yajl::Parser.new
   params = parser.parse(request.body.read)
   sizex, sizey, iter, cutoff = standardparams(params)
   direction = params['direction']
   basenoise = params['basenoise']
+  timingTab = params['timing']
+  timing_after_parse = timing
   gen = ShapeGenerator.new
   shape, basenoise = gen.shift_and_generate(basenoise, direction.to_sym, iter, cutoff)
-  json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff}
+  timing_after = timing
+  timingTab["server receive"] = timing_before
+  timingTab["server parse"] = timing_after_parse
+  timingTab["server generate"] = timing_after
+  json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff, :timing => timingTab }
   Yajl::Encoder.encode(json)
 end
 
