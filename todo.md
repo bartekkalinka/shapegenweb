@@ -8,5 +8,6 @@
     - [x] any tests before refactorization
     - [x] use some testing framework
 - [ ] project structure
+  - [ ] timing separated from main code as much as posibble
   - [ ] dividing javascript into modules
   - [ ] more OO design in shape generator 

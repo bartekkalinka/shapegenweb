@@ -1,7 +1,10 @@
 # shapegenweb.rb
 require 'sinatra'
 require 'yajl'
+require './utils'
 require './shape_generator'
+
+include Timing
 
 def standardparams(params)
   sizex = params['sizex'].to_i
@@ -11,13 +14,9 @@ def standardparams(params)
   return sizex, sizey, iter, cutoff
 end
 
-def timing
-  (Time.now.to_f * 1000).floor
-end
-
 get '/shapegenweb/generate' do
   sizex, sizey, iter, cutoff = standardparams(params)
-  gen = ShapeGenerator.new
+  gen = ShapeGenerator.new({})
   shape, basenoise = gen.generate_shape(sizex, sizey, iter, cutoff)
   json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff}
   Yajl::Encoder.encode(json)
@@ -33,7 +32,7 @@ put '/shapegen/shift_and_generate' do
   timingTab = params['timing']
   timingTab["server receive"] = timing_before
   timingTab["server parse"] = timing
-  gen = ShapeGenerator.new
+  gen = ShapeGenerator.new(timingTab)
   shape, basenoise = gen.shift_and_generate(basenoise, direction.to_sym, iter, cutoff)
   timingTab["server generate"] = timing
   json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff, :timing => timingTab }
