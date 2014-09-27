@@ -1,6 +1,6 @@
 # test_perf.rb
 require './utils'
-require './shape_generator'
+require '../core/shape_generator'
 
 include Timing
 

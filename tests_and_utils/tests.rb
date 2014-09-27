@@ -1,5 +1,5 @@
 require './utils.rb'
-require './shape_generator'
+require '../core/shape_generator'
 
 def getGenerator
   ShapeGenerator.new({})

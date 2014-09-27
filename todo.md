@@ -1,13 +1,18 @@
 - [ ] terrain generator
   - [ ] better/smooth performance
-    - [ ] better generator performance
+    - [ ] caching shapes in mongodb
   - [ ] api based on coordinates + persistence
 - [ ] unit tests
   - [ ] client code in ruby (consuming REST)
+  - [ ] tests for terrain cache (with db and generator mocks)
+    - [ ] db and generator injection
   - [x] shape generator unit tests where possible
     - [x] any tests before refactorization
     - [x] use some testing framework
 - [ ] project structure
+  - [ ] config
+    - [ ] iter, cutoff etc.
+    - [ ] db name
   - [ ] timing separated from main code as much as posibble
   - [ ] dividing javascript into modules
-  - [ ] more OO design in shape generator 
+  - [ ] more OO design in shape generator

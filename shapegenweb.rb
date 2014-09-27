@@ -1,8 +1,9 @@
 # shapegenweb.rb
 require 'sinatra'
 require 'yajl'
-require './utils'
-require './shape_generator'
+require './tests_and_utils/utils'
+require './core/shape_generator'
+require './core/terrain_cache'
 
 include Timing
 
@@ -15,30 +16,37 @@ def standardparams(params)
 end
 
 get '/shapegenweb/generate' do
+  # read request parameters
   sizex, sizey, iter, cutoff = standardparams(params)
-  gen = ShapeGenerator.new({})
-  shape, basenoise = gen.generate_shape(sizex, sizey, iter, cutoff)
+  # call generator
+  shape, basenoise = TerrainCache.generate(sizex, sizey, iter, cutoff)
+  # encode response
   json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff}
   Yajl::Encoder.encode(json)
 end
 
 put '/shapegen/shift_and_generate' do
+  # timing
   timing_before = timing
+  # read request parameters
   parser = Yajl::Parser.new
   params = parser.parse(request.body.read)
   sizex, sizey, iter, cutoff = standardparams(params)
   direction = params['direction']
   basenoise = params['basenoise']
   timingTab = params['timing']
+  # timing
   timingTab["server receive"] = timing_before
   timingTab["server parse"] = timing
-  gen = ShapeGenerator.new(timingTab)
-  shape, basenoise = gen.shift_and_generate(basenoise, direction.to_sym, iter, cutoff)
+  # call generator
+  shape, basenoise = TerrainCache.shift_and_generate(basenoise, direction.to_sym, iter, cutoff, timingTab)
+  # timing
   timingTab["server generate"] = timing
+  # encode response
   json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff, :timing => timingTab }
   Yajl::Encoder.encode(json)
 end
 
 get '/shapegenweb' do
-  redirect '/shapegenajax.html'
+  redirect '/movingterrain.html'
 end

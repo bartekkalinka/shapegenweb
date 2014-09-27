@@ -11,6 +11,6 @@ Needs: ruby 2.0, sinatra, yajl (+ ruby dev kit on windows), rspec (for unit test
 
 Run service: ruby shapegenweb.rb (turn off comodo autosandboxing if applicable)
 
-Client url: http://localhost:4567/movingterrain.html
+Client url: http://localhost:4567/shapegenweb
 
-Run tests: rspec tests.rb
+Run tests: rspec tests_and_utils\tests.rb
