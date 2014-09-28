@@ -19,7 +19,6 @@ class TerrainCache
 
   def self.shift_and_generate(in_basenoise, direction, iter, cutoff)
     update_coordinates(direction)
-    log_timing("update_coord " + @@coord.to_s + " dir " + direction.to_s)
     shape, basenoise = check_storage
     if(shape == nil)
       gen = ShapeGenerator.new
@@ -45,8 +44,9 @@ class TerrainCache
     coll = @@db['shapegenweb']
     cur = coll.find( { :x => @@coord[0], :y => @@coord[1] }, {:fields => [:shape, :basenoise]} )
     if(cur.has_next?)
-      log_timing("cache exists " + @@coord.to_s)
       doc = cur.next
+      log_timing("cache exists " + @@coord.to_s)
+      return doc["shape"], doc["basenoise"]
     else
       log_timing("no cache " + @@coord.to_s)
       return nil, nil
