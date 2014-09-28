@@ -62,10 +62,10 @@ $(document).ready(function() {
 			dataType: "json",
 			success: function(returnedData) {
 				glob.shapeData = returnedData;
-				drawShape();
 				glob.timingTab = returnedData.timing;
 				endTiming();
 				showTiming();
+				drawShape();
 			},
 			error: function (err){
 				alert('Error: ' + err);
@@ -104,6 +104,7 @@ $(document).ready(function() {
 	}
 
 	function startTiming() {
+		glob.timingTab = {};
 		glob.timingTab["client start"] = (new Date()).getTime();
 	}
 

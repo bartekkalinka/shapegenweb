@@ -157,11 +157,9 @@ class ShapeGenerator
   end
 
   def shift_and_generate(basenoise, direction, iter, cutoff)
-    log_timing("generator before")
     basenoise = shift_and_generate_noise(basenoise, direction)
-    log_timing("generator shift_and_generate_noise")
     shape = shape_from_basenoise(basenoise, iter, cutoff)
-    log_timing("generator shape_from_basenoise")
+    log_timing("generator after")
     return shape, basenoise
   end
 
