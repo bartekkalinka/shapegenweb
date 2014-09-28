@@ -4,16 +4,26 @@ class TerrainCache
   include Mongo
 
   @@coord = [0, 0]
+  @@client = MongoClient.new
+  @@db = @@client['local']
 
   def self.generate(sizex, sizey, iter, cutoff)
-    gen = ShapeGenerator.new({})
-    gen.generate_shape(sizex, sizey, iter, cutoff)
+    shape, basenoise = check_storage
+    if(shape == nil)
+      gen = ShapeGenerator.new
+      shape, basenoise = store(gen.generate_shape(sizex, sizey, iter, cutoff))
+    end
+    return shape, basenoise
   end
 
-  def self.shift_and_generate(basenoise, direction, iter, cutoff, timingTab)
+  def self.shift_and_generate(in_basenoise, direction, iter, cutoff)
     update_coordinates(direction)
-    gen = ShapeGenerator.new(timingTab)
-    store(gen.shift_and_generate(basenoise, direction, iter, cutoff))
+    shape, basenoise = check_storage
+    if(shape == nil)
+      gen = ShapeGenerator.new
+      shape, basenoise = store(gen.shift_and_generate(in_basenoise, direction, iter, cutoff))
+    end
+    return shape, basenoise
   end
 
   def self.update_coordinates(direction)
@@ -23,11 +33,21 @@ class TerrainCache
 
   def self.store(shift_result)
     shape, basenoise = shift_result
-    client = MongoClient.new #TODO store connection in class variable
-    db = client['local']
-    coll = db['firstTest']
+    coll = @@db['firstTest']
     rec = { :x => @@coord[0], :y => @@coord[1], :shape => shape, :basenoise => basenoise }
     coll.insert rec
     return shift_result
   end
+
+  def self.check_storage
+    coll = @@db['firstTest']
+    cur = coll.find( { :x => @@coord[0], :y => @@coord[1] }, {:fields => [:shape, :basenoise]} )
+    if(cur.has_next?)
+      doc = cur.next
+      return doc[:shape], doc[:basenoise]
+    else
+      return nil, nil
+    end
+  end
+
 end

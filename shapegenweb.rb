@@ -34,16 +34,16 @@ put '/shapegen/shift_and_generate' do
   sizex, sizey, iter, cutoff = standardparams(params)
   direction = params['direction']
   basenoise = params['basenoise']
-  timingTab = params['timing']
+  Timing.timingTab = params['timing']
   # timing
-  timingTab["server receive"] = timing_before
-  timingTab["server parse"] = timing
+  log_timing("server receive", timing_before)
+  log_timing("server parse")
   # call generator
-  shape, basenoise = TerrainCache.shift_and_generate(basenoise, direction.to_sym, iter, cutoff, timingTab)
+  shape, basenoise = TerrainCache.shift_and_generate(basenoise, direction.to_sym, iter, cutoff)
   # timing
-  timingTab["server generate"] = timing
+  log_timing("server generate")
   # encode response
-  json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff, :timing => timingTab }
+  json = { :shape => shape, :basenoise => basenoise, :sizex => sizex, :sizey => sizey, :iter => iter, :cutoff => cutoff, :timing => Timing.timingTab }
   Yajl::Encoder.encode(json)
 end
 

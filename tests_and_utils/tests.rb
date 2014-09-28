@@ -2,7 +2,7 @@ require './utils.rb'
 require '../core/shape_generator'
 
 def getGenerator
-  ShapeGenerator.new({})
+  ShapeGenerator.new
 end
 
 RSpec.describe ShapeGenerator do

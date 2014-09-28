@@ -6,15 +6,15 @@ include Timing
 
 def test_generate_performance
   sizex, sizey, iter, cutoff = [50, 50, 3, false]
-  gen = ShapeGenerator.new({})
-  timing_start = timing
+  gen = ShapeGenerator.new
+  log_timing("timing_start")
   shape, basenoise = gen.generate_shape(sizex, sizey, iter, cutoff)
-  timing_generate = timing
+  log_timing("timing_generate")
   direction = :N
   shape, basenoise = gen.shift_and_generate(basenoise, direction, iter, cutoff)
-  timing_shift_and_generate = timing
-  puts "generate: " + (timing_generate - timing_start).to_s + " ms"
-  puts "shift and generate: " + (timing_shift_and_generate - timing_generate).to_s + " ms"
+  log_timing("timing_shift_and_generate")
+  puts "generate: " + (Timing.timingTab["timing_generate"] - Timing.timingTab["timing_start"]).to_s + " ms"
+  puts "shift and generate: " + (Timing.timingTab["timing_shift_and_generate"] - Timing.timingTab["timing_generate"]).to_s + " ms"
 end
 
 test_generate_performance

@@ -12,7 +12,7 @@
 - [ ] project structure
   - [ ] config
     - [ ] iter, cutoff etc.
-    - [ ] db name
+    - [ ] db name, location, collection name etc.
   - [ ] timing separated from main code as much as posibble
   - [ ] dividing javascript into modules
   - [ ] more OO design in shape generator

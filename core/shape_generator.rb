@@ -2,10 +2,6 @@ class ShapeGenerator
 
   include Timing
 
-  def initialize(timingTab)
-    @timingTab = timingTab
-  end
-
   # returns noise table, that is: 2-dim. array with random numbers between 0 and 1000
   def get_noise_table(size_x, size_y)
     (0 ... size_x).collect { |x| (0 ... size_y).collect { |y| rand(1000) }}
@@ -146,16 +142,11 @@ class ShapeGenerator
     noise = basenoise
     iter.times { |i|
       noise = add_margin(noise)
-      @timingTab["generator add_margin " + i.to_s] = timing
       noise = scale_noise_table(noise)
-      @timingTab["generator scale_noise_table " + i.to_s] = timing
       noise = get_smooth_noise_table(noise)
-      @timingTab["generator get_smooth_noise_table " + i.to_s] = timing
       noise = cut_margin(noise)
-      @timingTab["generator cut_margin " + i.to_s] = timing
     }
     shape = render_shape_from_noise(noise)
-    @timingTab["generator render_shape_from_noise"] = timing
     shape = (if cutoff then cutoff_loose_fragments(shape) else shape end)
   end
 
@@ -166,11 +157,11 @@ class ShapeGenerator
   end
 
   def shift_and_generate(basenoise, direction, iter, cutoff)
-    @timingTab["generator before"] = timing
+    log_timing("generator before")
     basenoise = shift_and_generate_noise(basenoise, direction)
-    @timingTab["generator shift_and_generate_noise"] = timing
+    log_timing("generator shift_and_generate_noise")
     shape = shape_from_basenoise(basenoise, iter, cutoff)
-    @timingTab["generator shape_from_basenoise"] = timing
+    log_timing("generator shape_from_basenoise")
     return shape, basenoise
   end
 
