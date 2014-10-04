@@ -1,7 +1,10 @@
 require './utils.rb'
 require '../core/shape_generator'
 
+include MyConfig
+
 def getGenerator
+  MyConfig.iter = 1
   ShapeGenerator.new
 end
 
@@ -97,48 +100,6 @@ RSpec.describe ShapeGenerator do
     expect(s.weight([[false, true, true], [true, true, false], [false, true, false], [false, true, false]])).to eq(6)
   end
 
-  it "find_first_point" do
-    s = getGenerator
-    x, y = s.find_first_point([[false, true, true], [true, true, false], [false, true, false], [false, true, false]])
-    expect(([[false, true, true], [true, true, false], [false, true, false], [false, true, false]])[x][y]).to eq(true)
-  end
-
-  it "substract_shape" do
-    s = getGenerator
-    subshapetab = [[false, true, false], [true, false, false], [false, true, false], [false, true, false]]
-    expect(s.substract_shape([[false, true, true], [true, true, false], [false, true, false], [false, true, false]], 
-      subshapetab)).to eq( 
-      [[false, false, true], [false, true, false], [false, false, false], [false, false, false]])
-  end
-
-  it "denil_chunk" do
-    s = getGenerator
-    expect(s.denil_chunk([[nil, true, true], [true, true, false], [false, true, nil], [nil, true, false]])).to eq(
-      [[false, true, true], [true, true, false], [false, true, false], [false, true, false]])
-  end
-
-  it "divide_into_whole_shapes" do
-    s = getGenerator
-    expect(s.divide_into_whole_shapes(
-      [[false, true, true], [false, false, false], [false, false, true], [false, true, true]])).to eq(
-      [[[false, true, true], [false, false, false], [false, false, false], [false, false, false]],
-       [[false, false, false], [false, false, false], [false, false, true], [false, true, true]],
-       [[false, false, false], [false, false, false], [false, false, false], [false, false, false]]]
-    )
-  end
-
-  it "cutoff_loose_fragments" do
-    s = getGenerator
-    expect(s.cutoff_loose_fragments(
-    [[false, true, true], [false, false, false], [false, false, true], [false, true, true]])).to eq(
-      [[false, false, false], [false, false, false], [false, false, true], [false, true, true]]
-    )
-    # empty shape -> empty shape
-    expect(s.cutoff_loose_fragments(
-    [[false, false, false], [false, false, false], [false, false, false], [false, false, false]])).to eq(
-    [[false, false, false], [false, false, false], [false, false, false], [false, false, false]])
-  end
-
   it "render_shape_from_noise" do
     s = getGenerator
     expect(s.render_shape_from_noise([[324, 628, 198], [98, 882, 901], [336, 552, 81], [479, 290, 70]])).to eq(
@@ -148,17 +109,14 @@ RSpec.describe ShapeGenerator do
 
   it "shape_from_basenoise" do
     s = getGenerator
-    expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, true)).to eq(
-      [[true, true, true], [false, false, true], [false, false, true], [false, true, true]]
-    )
-    expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1, false)).to eq(
+    expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]])).to eq(
       [[true, true, true], [false, false, true], [false, false, true], [false, true, true]]
     )
   end
 
   it "generate_shape" do
     s = getGenerator
-    s.generate_shape(4, 3, 1, true).each { |result_tab|
+    s.generate_shape(4, 3).each { |result_tab|
       expect(result_tab.length).to eq(4)
       expect(result_tab.index { |col| col.length != 3 }).to eq(nil)
     }
@@ -166,7 +124,7 @@ RSpec.describe ShapeGenerator do
 
   it "shift_and_generate" do
     s = getGenerator
-    shape, basenoise = s.shift_and_generate([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], :E, 1, false)
+    shape, basenoise = s.shift_and_generate([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], :E)
     expect(shape[0...2]).to eq([[false, false, true], [false, true, true]])
     expect(basenoise[0...3]).to eq([[209,944,801],[108,79,418],[581,486,932]])
   end

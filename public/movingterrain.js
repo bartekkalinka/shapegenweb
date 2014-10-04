@@ -1,8 +1,8 @@
 $(document).ready(function() {
 	var glob = {
 		tilesize : 6,
-		shapeData : {},
 		size : 48,
+		basenoise : {},
 		showTiming : true,
 		timingTab : {}
 	};
@@ -41,9 +41,9 @@ $(document).ready(function() {
 	}
 
 	function getAjaxShape() {
-		$.getJSON("/shapegenweb/generate", { "sizex":glob.size, "sizey":glob.size, "iter":3, "cutoff":"false" }, function(returnedData) {
-			glob.shapeData = returnedData;
-			drawShape();
+		$.getJSON("/shapegenweb/generate", { "size":glob.size }, function(returnedData) {
+			glob.basenoise = returnedData.basenoise;
+			drawShape(returnedData);
 		});
 	}
 
@@ -51,8 +51,7 @@ $(document).ready(function() {
 		startTiming();
 
 		var DataToSend = new Object();
-		DataToSend = { "sizex":glob.size, "sizey":glob.size, "basenoise":glob.shapeData.basenoise, "direction":direction,
-			"iter":3, "cutoff":"false", "timing":glob.timingTab };
+		DataToSend = { "basenoise":glob.basenoise, "direction":direction,	"timing":glob.timingTab };
 
 		$.ajax({
 			type: "PUT",
@@ -61,11 +60,11 @@ $(document).ready(function() {
 			data: JSON.stringify(DataToSend),
 			dataType: "json",
 			success: function(returnedData) {
-				glob.shapeData = returnedData;
+				glob.basenoise = returnedData.basenoise;
 				glob.timingTab = returnedData.timing;
 				endTiming();
 				showTiming();
-				drawShape();
+				drawShape(returnedData);
 			},
 			error: function (err){
 				alert('Error: ' + err);
@@ -78,16 +77,16 @@ $(document).ready(function() {
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 	}
 	
-	function drawShape() {
+	function drawShape(shapeData) {
 		clearCanvas();
 		ctx.fillStyle = "rgb(255,0,0)";
-		var shape = glob.shapeData.shape;
+		var shape = shapeData.shape;
 		var offset = [
-		    Math.floor((canvas.width / glob.tilesize - glob.shapeData.sizey) / 2), 
-			Math.floor((canvas.height / glob.tilesize - glob.shapeData.sizex) / 2)
+		    Math.floor((canvas.width / glob.tilesize - glob.size) / 2), 
+			Math.floor((canvas.height / glob.tilesize - glob.size) / 2)
 		];
-		for(i=0; i<glob.shapeData.sizey; i+=1) {
-		  for(j=0; j<glob.shapeData.sizex; j+=1) {
+		for(i=0; i<glob.size; i+=1) {
+		  for(j=0; j<glob.size; j+=1) {
 		    if(shape[j][i]) {
 		      ctx.fillRect(
 		    		  glob.tilesize * (offset[1] + j), 

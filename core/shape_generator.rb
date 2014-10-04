@@ -1,6 +1,7 @@
 class ShapeGenerator
 
   include Timing
+  include MyConfig
 
   # returns noise table, that is: 2-dim. array with random numbers between 0 and 1000
   def get_noise_table(size_x, size_y)
@@ -79,86 +80,31 @@ class ShapeGenerator
     (shape.flatten.select { |a| a }).length
   end
   
-  # find first true value in a shape table
-  def find_first_point(shape)
-    searchtab = (0...shape.length).collect { |x| shape[x].index {|elem| elem} }
-    i = searchtab.index {|elem| elem!=nil}
-    if(i) then [i, searchtab[i]] else nil end
-  end
-
-  # from_shape - sub_shape
-  def substract_shape(from_shape, sub_shape)
-    (0 ... from_shape.length).collect { |x| (0 ... from_shape[0].length).collect { |y| from_shape[x][y] and not sub_shape[x][y] }}
-  end
-
-  # [true/false/nil] table -> [true/false] table
-  def denil_chunk(chunk)
-    (0 ... chunk.length).collect { |x| (0 ... chunk[0].length).collect { |y| ![false,nil].include?(chunk[x][y]) }}
-  end
-
-  # recursive whole shape extracting
-  # curr_chunk - accumulated result shape
-  # map_shape - input nil-shape (possibly consisting of many separate whole shapes)
-  # x, y - current position of processing
-  def get_whole_shape(curr_chunk, map_shape, x, y)
-    if((0...curr_chunk.length).include?(x) and (0...curr_chunk[0].length).include?(y))
-      if(curr_chunk[x][y] == nil)
-        if(curr_chunk[x][y] = map_shape[x][y])
-          [-1,0,1].product([-1,0,1]).each { |d| get_whole_shape(curr_chunk, map_shape, x + d[0], y + d[1]) }
-        end
-      end
-    end
-  end
-
-  # divide shape
-  # into whole shapes it consists of
-  # return a list of whole shapes
-  def divide_into_whole_shapes(shape)
-    left_over = shape
-    chunks = []
-    while(weight(left_over) > 0)
-      x, y = find_first_point(left_over)
-      chunk = build_empty_shape_nil(shape.length, shape[0].length)
-      get_whole_shape(chunk, left_over, x, y)
-      chunks << denil_chunk(chunk)
-      left_over = substract_shape(left_over, chunk)
-    end
-    return chunks + [left_over]
-  end
-
-  # get one whole shape from input shape
-  # by 1. dividing it into whole shapes
-  # 2. choosing the largest whole shape as a result
-  def cutoff_loose_fragments(shape)
-    divide_into_whole_shapes(shape).max_by { |chunk| weight(chunk) }
-  end
-
   # noise table -> shape
   def render_shape_from_noise(noise)
     (0 ... noise.length).collect { |x| (0 ... noise[0].length).collect { |y| ((noise[x][y]) >= 500) }}
   end
 
-  def shape_from_basenoise(basenoise, iter, cutoff)
+  def shape_from_basenoise(basenoise)
     noise = basenoise
-    iter.times { |i|
+    @@iter.times { |i|
       noise = add_margin(noise)
       noise = scale_noise_table(noise)
       noise = get_smooth_noise_table(noise)
       noise = cut_margin(noise)
     }
     shape = render_shape_from_noise(noise)
-    shape = (if cutoff then cutoff_loose_fragments(shape) else shape end)
   end
 
-  def generate_shape(size_x, size_y, iter, cutoff)
-    basenoise = get_noise_table(size_x, size_y)
-    shape = shape_from_basenoise(basenoise, iter, cutoff)
+  def generate_shape(sizex, sizey)
+    basenoise = get_noise_table(sizex, sizey)
+    shape = shape_from_basenoise(basenoise)
     return shape, basenoise
   end
 
-  def shift_and_generate(basenoise, direction, iter, cutoff)
+  def shift_and_generate(basenoise, direction)
     basenoise = shift_and_generate_noise(basenoise, direction)
-    shape = shape_from_basenoise(basenoise, iter, cutoff)
+    shape = shape_from_basenoise(basenoise)
     log_timing("generator after")
     return shape, basenoise
   end

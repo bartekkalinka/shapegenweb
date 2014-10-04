@@ -1,3 +1,11 @@
+module MyConfig
+  @@iter = 3
+
+  def iter=(it)
+    @@iter = it
+  end
+end
+
 module Timing
   @@timingTab = {}
 

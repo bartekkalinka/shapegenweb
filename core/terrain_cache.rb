@@ -8,21 +8,21 @@ class TerrainCache
   @@client = MongoClient.new
   @@db = @@client['local']
 
-  def self.generate(sizex, sizey, iter, cutoff)
+  def self.generate(size)
     shape, basenoise = check_storage
     if(shape == nil)
       gen = ShapeGenerator.new
-      shape, basenoise = store(gen.generate_shape(sizex, sizey, iter, cutoff))
+      shape, basenoise = store(gen.generate_shape(size, size))
     end
     return shape, basenoise
   end
 
-  def self.shift_and_generate(in_basenoise, direction, iter, cutoff)
+  def self.shift_and_generate(in_basenoise, direction)
     update_coordinates(direction)
     shape, basenoise = check_storage
     if(shape == nil)
       gen = ShapeGenerator.new
-      shape, basenoise = store(gen.shift_and_generate(in_basenoise, direction, iter, cutoff))
+      shape, basenoise = store(gen.shift_and_generate(in_basenoise, direction))
     end
     return shape, basenoise
   end

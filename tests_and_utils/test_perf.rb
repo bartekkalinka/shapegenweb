@@ -5,13 +5,13 @@ require '../core/shape_generator'
 include Timing
 
 def test_generate_performance
-  sizex, sizey, iter, cutoff = [50, 50, 3, false]
+  size = 50
   gen = ShapeGenerator.new
   log_timing("timing_start")
-  shape, basenoise = gen.generate_shape(sizex, sizey, iter, cutoff)
+  shape, basenoise = gen.generate_shape(size, size)
   log_timing("timing_generate")
   direction = :N
-  shape, basenoise = gen.shift_and_generate(basenoise, direction, iter, cutoff)
+  shape, basenoise = gen.shift_and_generate(basenoise, direction)
   log_timing("timing_shift_and_generate")
   puts "generate: " + (Timing.timingTab["timing_generate"] - Timing.timingTab["timing_start"]).to_s + " ms"
   puts "shift and generate: " + (Timing.timingTab["timing_shift_and_generate"] - Timing.timingTab["timing_generate"]).to_s + " ms"
