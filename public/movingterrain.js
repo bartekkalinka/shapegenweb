@@ -1,8 +1,8 @@
 $(document).ready(function() {
 	var glob = {
-		tilesize : 12,
+		tilesize : 6,
 		shapeData : {},
-		size : 50,
+		size : 48,
 		showTiming : true,
 		timingTab : {}
 	};
