@@ -26,6 +26,7 @@ $(document).ready(function() {
 			break;
 		case 38:
 			direction = "N";
+			glob.coord[1] = glob.coord[1] - 1;
 			break;
 		case 39:
 			direction = "E";
@@ -33,6 +34,7 @@ $(document).ready(function() {
 			break;
 		case 40:
 			direction = "S";
+			glob.coord[1] = glob.coord[1] + 1;
 			break;
 		}
 
@@ -79,21 +81,26 @@ $(document).ready(function() {
 		return glob.size * glob.tilesize
 	}
 
-	function getCoordCanvasOffset() {
+	function getSquareOffset() {
 		return [glob.coord[0] * squareSize(), glob.coord[1] * squareSize()];
 	}
-	
+
 	function clearCanvas() {
-		var offset = getCoordCanvasOffset();
+		ctx.fillStyle = "rgb(0,0,0)";
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+	}
+	
+	function clearSquare() {
+		var offset = getSquareOffset();
 		ctx.fillStyle = "rgb(0,0,0)";
 		ctx.fillRect(offset[0], offset[1], squareSize(), squareSize());
 	}
 	
 	function drawShape(shapeData) {
-		clearCanvas();
+		clearSquare();
 		ctx.fillStyle = "rgb(255,0,0)";
 		var shape = shapeData.shape;
-		var offset = getCoordCanvasOffset();
+		var offset = getSquareOffset();
 		for(i=0; i<glob.size; i+=1) {
 		  for(j=0; j<glob.size; j+=1) {
 		    if(shape[j][i]) {
