@@ -5,6 +5,10 @@ module MyConfig
   # mongodb config
   @@dbname = 'local'
   @@collection_name = 'shapegenweb'
+
+  def getConfig
+    
+  end
 end
 
 module Timing

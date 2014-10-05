@@ -1,5 +1,6 @@
 require './utils.rb'
 require '../core/shape_generator'
+require '../core/terrain_generator'
 
 def getGenerator
   ShapeGenerator.new
@@ -96,3 +97,10 @@ RSpec.describe ShapeGenerator do
   end
 end
 
+RSpec.describe TerrainGenerator do
+
+  it "shape_to_basenoise_coord" do
+    t = TerrainGenerator.new(48, 3)
+    expect(t.shape_to_basenoise_coord([-5, -5])).to eq([-1, -1])
+  end
+end
