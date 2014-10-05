@@ -22,6 +22,7 @@ $(document).ready(function() {
 		{
 		case 37:
 		    direction = "W";
+			glob.coord[0] = glob.coord[0] - 1;
 			break;
 		case 38:
 			direction = "N";
@@ -73,23 +74,32 @@ $(document).ready(function() {
 			}
 		});
 	}
+
+	function squareSize() {
+		return glob.size * glob.tilesize
+	}
+
+	function getCoordCanvasOffset() {
+		return [glob.coord[0] * squareSize(), glob.coord[1] * squareSize()];
+	}
 	
 	function clearCanvas() {
+		var offset = getCoordCanvasOffset();
 		ctx.fillStyle = "rgb(0,0,0)";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillRect(offset[0], offset[1], squareSize(), squareSize());
 	}
 	
 	function drawShape(shapeData) {
-		//clearCanvas();
+		clearCanvas();
 		ctx.fillStyle = "rgb(255,0,0)";
 		var shape = shapeData.shape;
-		var offset = [glob.coord[0] * glob.size, glob.coord[1] * glob.size];
+		var offset = getCoordCanvasOffset();
 		for(i=0; i<glob.size; i+=1) {
 		  for(j=0; j<glob.size; j+=1) {
 		    if(shape[j][i]) {
 		      ctx.fillRect(
-		    		  glob.tilesize * (offset[0] + j), 
-		    		  glob.tilesize * (offset[1] + i), glob.tilesize, glob.tilesize
+		    		  offset[0] + glob.tilesize * j, 
+		    		  offset[1] + glob.tilesize * i, glob.tilesize, glob.tilesize
 		      );
 		    }
 		  }
