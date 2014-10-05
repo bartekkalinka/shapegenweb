@@ -3,8 +3,8 @@ class ShapeGenerator
   include Timing
 
   # returns noise table, that is: 2-dim. array with random numbers between 0 and 1000
-  def get_noise_table(size_x, size_y)
-    (0 ... size_x).collect { |x| (0 ... size_y).collect { |y| rand(1000) }}
+  def get_noise_table(size)
+    (0 ... size).collect { |x| (0 ... size).collect { |y| rand(1000) }}
   end
 
   # sets noise table value for x, y in boundaries [0, @size>
@@ -14,8 +14,8 @@ class ShapeGenerator
   end
 
   # prepare table filled with 0s
-  def get_zeros_table(size_x, size_y)
-    (0 ... size_x).collect { |x| (0 ... size_y).collect { |y| 0 }}
+  def get_zeros_table(size)
+    (0 ... size).collect { |x| (0 ... size).collect { |y| 0 }}
   end
 
   # surround a noise table with zeros
@@ -35,7 +35,7 @@ class ShapeGenerator
   # so effectively: 1/4th of 2 * noise
   def scale_noise_table(noise)
     half_x, half_y = [noise.length, noise[0].length].collect { |a| (a / 2).ceil + (a % 2) - 1 }
-    tab = get_zeros_table(noise.length, noise[0].length) # TODO less of this: noise.length, noise[0].length
+    tab = get_zeros_table(noise.length)
     (0 ... 2 * noise.length).collect { |x| (0 ... 2 * noise[0].length).collect { |y| [0,1].product([0,1]).each {
       |a,b| safe_noise_set(tab, 2 * (x - half_x) + a, 2 * (y - half_y) + b, safe_noise_test(noise, x, y))
     }}}
@@ -54,24 +54,6 @@ class ShapeGenerator
     (0 ... noise.length).collect { |x| (0 ... noise[0].length).collect { |y| 
       ([-1,0,1].product([-1,0,1]).inject(0) { |sum, d| sum + safe_noise_test(noise, x + d[0], y + d[1]) / (2 ** (d[0].abs + d[1].abs + 2)) })
     }}
-  end
-
-  def shift_and_generate_noise(noise, direction)
-    case direction
-    when :E
-      return noise[1...noise.length] + [noise[0].collect { |col| rand(1000) }]
-    when :W
-      return [noise[0].collect { |col| rand(1000) }] + noise[0...noise.length-1]
-    when :N
-      return (noise.collect { |col| [rand(1000)] + col[0...noise[0].length-1]})
-    when :S
-      return (noise.collect { |col| col[1...noise[0].length] + [rand(1000)]})
-    end
-  end
-
-  # get standard-size table filled with nil values
-  def build_empty_shape_nil(size_x, size_y)
-    (0 ... size_x).collect { |x| (0 ... size_y).collect { |y| nil }}
   end
 
   # weight: number of true values in a table
@@ -95,18 +77,23 @@ class ShapeGenerator
     shape = render_shape_from_noise(noise)
   end
 
-  def generate_shape(sizex, sizey, iter)
-    basenoise = get_noise_table(sizex, sizey)
-    shape = shape_from_basenoise(basenoise, iter)
-    return shape, basenoise
+  def offset_switch(coord, size)
+    if coord >= size then 1 else 0 end
   end
 
-  def shift_and_generate(basenoise, direction, iter)
-    shiftstep = basenoise.length / (2 ** iter)
-    shiftstep.times { basenoise = shift_and_generate_noise(basenoise, direction) }
-    shape = shape_from_basenoise(basenoise, iter)
-    log_timing("generator after")
-    return shape, basenoise
+  def offset_trim(coord, size)
+    if coord >= size then coord - size else coord end
+  end
+
+  # basenoisetab: 2-dimensional array containing 4 square noise tables of same size
+  # offset: array with 2 elements - position of left upper corner of result noise table
+  def get_shifted_basenoise(basenoisetab, offset)
+    size = basenoisetab[0][0].length
+    (offset[0]...(size + offset[0])).collect { 
+      |x| (offset[1]...(size + offset[1])).collect { 
+        |y| basenoisetab[offset_switch(x, size)][offset_switch(y, size)][offset_trim(x, size)][offset_trim(y, size)] 
+      }
+    }
   end
 
 end
