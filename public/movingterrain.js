@@ -4,12 +4,13 @@ $(document).ready(function() {
 		size : 48,
 		basenoise : {},
 		showTiming : true,
-		timingTab : {}
+		timingTab : {},
+		coord : [0, 0]
 	};
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
 	clearCanvas();
-	getAjaxShape();
+	generate();
 	$("#timing").hide();
 
 	window.addEventListener( "keydown", doKeyDown, true);
@@ -27,6 +28,7 @@ $(document).ready(function() {
 			break;
 		case 39:
 			direction = "E";
+			glob.coord[0] = glob.coord[0] + 1;
 			break;
 		case 40:
 			direction = "S";
@@ -40,7 +42,7 @@ $(document).ready(function() {
 		}
 	}
 
-	function getAjaxShape() {
+	function generate() {
 		$.getJSON("/shapegenweb/generate", { "size":glob.size }, function(returnedData) {
 			glob.basenoise = returnedData.basenoise;
 			drawShape(returnedData);
@@ -78,28 +80,20 @@ $(document).ready(function() {
 	}
 	
 	function drawShape(shapeData) {
-		clearCanvas();
+		//clearCanvas();
 		ctx.fillStyle = "rgb(255,0,0)";
 		var shape = shapeData.shape;
-		var offset = [
-		    Math.floor((canvas.width / glob.tilesize - glob.size) / 2), 
-			Math.floor((canvas.height / glob.tilesize - glob.size) / 2)
-		];
+		var offset = [glob.coord[0] * glob.size, glob.coord[1] * glob.size];
 		for(i=0; i<glob.size; i+=1) {
 		  for(j=0; j<glob.size; j+=1) {
 		    if(shape[j][i]) {
 		      ctx.fillRect(
-		    		  glob.tilesize * (offset[1] + j), 
-		    		  glob.tilesize * (offset[0] + i), glob.tilesize, glob.tilesize
+		    		  glob.tilesize * (offset[0] + j), 
+		    		  glob.tilesize * (offset[1] + i), glob.tilesize, glob.tilesize
 		      );
 		    }
 		  }
 		}		
-	}
-
-	function autoLoop() {
-		shiftAndGenerate();
-		window.setTimeout(autoLoop, 500);	
 	}
 
 	function startTiming() {

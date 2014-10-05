@@ -1,7 +1,6 @@
 class ShapeGenerator
 
   include Timing
-  include MyConfig
 
   # returns noise table, that is: 2-dim. array with random numbers between 0 and 1000
   def get_noise_table(size_x, size_y)
@@ -85,9 +84,9 @@ class ShapeGenerator
     (0 ... noise.length).collect { |x| (0 ... noise[0].length).collect { |y| ((noise[x][y]) >= 500) }}
   end
 
-  def shape_from_basenoise(basenoise)
+  def shape_from_basenoise(basenoise, iter)
     noise = basenoise
-    @@iter.times { |i|
+    iter.times { |i|
       noise = add_margin(noise)
       noise = scale_noise_table(noise)
       noise = get_smooth_noise_table(noise)
@@ -96,15 +95,16 @@ class ShapeGenerator
     shape = render_shape_from_noise(noise)
   end
 
-  def generate_shape(sizex, sizey)
+  def generate_shape(sizex, sizey, iter)
     basenoise = get_noise_table(sizex, sizey)
-    shape = shape_from_basenoise(basenoise)
+    shape = shape_from_basenoise(basenoise, iter)
     return shape, basenoise
   end
 
-  def shift_and_generate(basenoise, direction)
-    basenoise = shift_and_generate_noise(basenoise, direction)
-    shape = shape_from_basenoise(basenoise)
+  def shift_and_generate(basenoise, direction, iter)
+    shiftstep = basenoise.length / (2 ** iter)
+    shiftstep.times { basenoise = shift_and_generate_noise(basenoise, direction) }
+    shape = shape_from_basenoise(basenoise, iter)
     log_timing("generator after")
     return shape, basenoise
   end

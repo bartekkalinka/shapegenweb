@@ -1,9 +1,10 @@
 module MyConfig
+  # generation config
   @@iter = 3
-
-  def iter=(it)
-    @@iter = it
-  end
+  @@size = 48
+  # mongodb config
+  @@dbname = 'local'
+  @@collection_name = 'shapegenweb'
 end
 
 module Timing

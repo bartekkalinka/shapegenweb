@@ -9,7 +9,7 @@ include Timing
 
 get '/shapegenweb/generate' do
   # call generator
-  shape, basenoise = TerrainCache.generate(params['size'].to_i)
+  shape, basenoise = TerrainCache.generate
   # encode response
   json = { :shape => shape, :basenoise => basenoise}
   Yajl::Encoder.encode(json)

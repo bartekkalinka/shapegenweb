@@ -3,16 +3,17 @@ require 'mongo'
 class TerrainCache
   include Mongo
   include Timing
+  include MyConfig
 
   @@coord = [0, 0]
   @@client = MongoClient.new
-  @@db = @@client['local']
+  @@db = @@client[@@dbname]
 
-  def self.generate(size)
+  def self.generate
     shape, basenoise = check_storage
     if(shape == nil)
       gen = ShapeGenerator.new
-      shape, basenoise = store(gen.generate_shape(size, size))
+      shape, basenoise = store(gen.generate_shape(@@size, @@size, @@iter))
     end
     return shape, basenoise
   end
@@ -22,7 +23,7 @@ class TerrainCache
     shape, basenoise = check_storage
     if(shape == nil)
       gen = ShapeGenerator.new
-      shape, basenoise = store(gen.shift_and_generate(in_basenoise, direction))
+      shape, basenoise = store(gen.shift_and_generate(in_basenoise, direction, @@iter))
     end
     return shape, basenoise
   end
@@ -34,14 +35,14 @@ class TerrainCache
 
   def self.store(shift_result)
     shape, basenoise = shift_result
-    coll = @@db['shapegenweb']
+    coll = @@db[@@collection_name]
     rec = { :x => @@coord[0], :y => @@coord[1], :shape => shape, :basenoise => basenoise }
     coll.insert rec
     return shift_result
   end
 
   def self.check_storage
-    coll = @@db['shapegenweb']
+    coll = @@db[@@collection_name]
     cur = coll.find( { :x => @@coord[0], :y => @@coord[1] }, {:fields => [:shape, :basenoise]} )
     if(cur.has_next?)
       doc = cur.next

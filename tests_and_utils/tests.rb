@@ -1,10 +1,7 @@
 require './utils.rb'
 require '../core/shape_generator'
 
-include MyConfig
-
 def getGenerator
-  MyConfig.iter = 1
   ShapeGenerator.new
 end
 
@@ -109,14 +106,14 @@ RSpec.describe ShapeGenerator do
 
   it "shape_from_basenoise" do
     s = getGenerator
-    expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]])).to eq(
+    expect(s.shape_from_basenoise([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], 1)).to eq(
       [[true, true, true], [false, false, true], [false, false, true], [false, true, true]]
     )
   end
 
   it "generate_shape" do
     s = getGenerator
-    s.generate_shape(4, 3).each { |result_tab|
+    s.generate_shape(4, 3, 1).each { |result_tab|
       expect(result_tab.length).to eq(4)
       expect(result_tab.index { |col| col.length != 3 }).to eq(nil)
     }
@@ -124,9 +121,10 @@ RSpec.describe ShapeGenerator do
 
   it "shift_and_generate" do
     s = getGenerator
-    shape, basenoise = s.shift_and_generate([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], :E)
-    expect(shape[0...2]).to eq([[false, false, true], [false, true, true]])
-    expect(basenoise[0...3]).to eq([[209,944,801],[108,79,418],[581,486,932]])
+    shape, basenoise = s.shift_and_generate([[745,183,743],[209,944,801],[108,79,418],[581,486,932]], :E, 1).each { |result_tab|
+      expect(result_tab.length).to eq(4)
+      expect(result_tab.index { |col| col.length != 3 }).to eq(nil)
+    }
   end
 end
 
