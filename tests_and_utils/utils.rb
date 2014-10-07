@@ -4,7 +4,7 @@ module MyConfig
   @@size = 48
   # mongodb config
   @@dbname = 'local'
-  @@collection_name = 'shapegenweb'
+  @@collections = {:basenoise => 'basenoise', :shape => 'shape'}
 
   def getConfig
     

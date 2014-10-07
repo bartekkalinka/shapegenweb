@@ -1,12 +1,13 @@
-require 'mongo'
 require './tests_and_utils/utils'
 require './core/terrain_generator'
+require './core/dbcache'
 
 class BatchGenerator
-  include Mongo
   include MyConfig
 
   def self.generate(upperLeft, lowerRight)
+    dbcache = DbCache.new(@@dbname, @@collections)
+    terraingen = TerrainGenerator(@@size, @@iter, dbcache)
     # TODO
   end
 end

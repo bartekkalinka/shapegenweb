@@ -2,6 +2,12 @@ require './utils.rb'
 require '../core/shape_generator'
 require '../core/terrain_generator'
 
+RSpec.describe TerrainGenerator do
+  it "shape_to_basenoise_coord" do
+    t = TerrainGenerator.new(48, 3, double("dbcache"))
+    # TODO
+  end
+
 def getGenerator
   ShapeGenerator.new
 end

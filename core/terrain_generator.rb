@@ -1,8 +1,9 @@
 class TerrainGenerator
-  def initialize(size, iter)
+  def initialize(size, iter, dbcache)
     @size = size
     @iter = iter
     @shiftstep = size / (2 ** iter)
+    @dbcache = dbcache
   end
 
   def basenoise_to_shape_coord(coord)
