@@ -3,10 +3,29 @@ require '../core/shape_generator'
 require '../core/terrain_generator'
 
 RSpec.describe TerrainGenerator do
+  it "basenoise_to_shape_coord" do
+    t = TerrainGenerator.new(48, 3, double("dbcache"))
+    expect(t.basenoise_to_shape_coord([-1, -1])).to eq([-6, -6])
+  end
+
   it "shape_to_basenoise_coord" do
     t = TerrainGenerator.new(48, 3, double("dbcache"))
-    # TODO
+    expect(t.shape_to_basenoise_coord([-5, -5])).to eq([-1, -1])
   end
+
+  it "get_basenoise_tileset" do
+    t = TerrainGenerator.new(48, 3, double("dbcache"))
+    expect(t.get_basenoise_tileset([-5, -5], [5, 5])).to eq([-1,0].product([-1,0]))
+  end
+
+  it "generate_basenoise" do
+    db = double("dbcache")
+    expect(db).to receive(:basenoise_put).with(anything(), -1, -1)
+    expect(db).to receive(:basenoise_put).with(anything(), 0, 0)
+    t = TerrainGenerator.new(48, 3, db)
+    t.generate_basenoise([[-1, -1], [0, 0]])
+  end
+end
 
 def getGenerator
   ShapeGenerator.new
@@ -103,10 +122,3 @@ RSpec.describe ShapeGenerator do
   end
 end
 
-RSpec.describe TerrainGenerator do
-
-  it "shape_to_basenoise_coord" do
-    t = TerrainGenerator.new(48, 3)
-    expect(t.shape_to_basenoise_coord([-5, -5])).to eq([-1, -1])
-  end
-end

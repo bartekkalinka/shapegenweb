@@ -1,14 +1,16 @@
 require './tests_and_utils/utils'
+require './core/shape_generator'
+require './core/db_cache'
 require './core/terrain_generator'
-require './core/dbcache'
 
 class BatchGenerator
   include MyConfig
 
   def self.generate(upperLeft, lowerRight)
     dbcache = DbCache.new(@@dbname, @@collections)
-    terraingen = TerrainGenerator(@@size, @@iter, dbcache)
-    # TODO
+    #TODO clean db collections
+    terraingen = TerrainGenerator.new(@@size, @@iter, dbcache)
+    terraingen.generate(upperLeft, lowerRight)
   end
 end
 
