@@ -5,10 +5,6 @@ module MyConfig
   # mongodb config
   @@dbname = 'local'
   @@collections = {:basenoise => 'basenoise', :shape => 'shape'}
-
-  def getConfig
-    
-  end
 end
 
 module Timing

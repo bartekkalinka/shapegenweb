@@ -19,10 +19,8 @@ class TerrainGenerator
 
   def get_basenoise_tileset(upperLeftShape, lowerRightShape)
     result = Set.new
-    (upperLeftShape[0]..lowerRightShape[0]).collect { |x|
-      (upperLeftShape[1]..lowerRightShape[1]).collect { |y|
+    get_tileset(upperLeftShape, lowerRightShape) { |x, y|
         result.add(shape_to_basenoise_coord([x, y]))
-      }
     }
     return result.to_a
   end
@@ -39,4 +37,14 @@ class TerrainGenerator
     generate_basenoise(get_basenoise_tileset(upperLeft, lowerRight))
     # TODO shape collection
   end
+
+  private
+  def get_tileset(upperLeftShape, lowerRightShape)
+    (upperLeftShape[0]..lowerRightShape[0]).collect { |x|
+      (upperLeftShape[1]..lowerRightShape[1]).collect { |y|
+        yield x, y
+      }
+    }
+  end
+
 end
