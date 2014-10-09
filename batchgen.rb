@@ -8,7 +8,7 @@ class BatchGenerator
 
   def self.generate(upperLeft, lowerRight)
     dbcache = DbCache.new(@@dbname, @@collections)
-    #TODO clean db collections
+    dbcache.clear
     terraingen = TerrainGenerator.new(@@size, @@iter, dbcache)
     terraingen.generate(upperLeft, lowerRight)
   end

@@ -10,40 +10,45 @@ class DbCache
     @db = @client[dbname]
   end
 
-  def basenoise_put(basenoise, x, y)
-    put(:basenoise, basenoise, x, y)
+  def basenoise_put(basenoise, coord)
+    put(:basenoise, basenoise, coord)
   end
 
-  def basenoise_get(x, y)
-    get(:basenoise, x, y)
+  def basenoise_get(coord)
+    get(:basenoise, coord)
   end
 
-  def shape_put(shape, x, y)
-    put(:shape, shape, x, y)
+  def shape_put(shape, coord)
+    put(:shape, shape, coord)
   end
 
-  def shape_get(x, y)
-    get(:shape, x, y)
+  def shape_get(coord)
+    get(:shape, coord)
+  end
+
+  def clear
+    @db[@collections[:basenoise]].remove({})
+    @db[@collections[:shape]].remove({})
   end
 
   private
-  def get(type, x, y)
+  def get(type, coord)
     coll = @db[@collections[type]]
-    cur = coll.find( { :x => x, :y => y }, {:fields => [type]} )
+    cur = coll.find( { :x => coord[0], :y => coord[1] }, {:fields => [type]} )
     if(cur.has_next?)
       doc = cur.next
-      log_timing(type.to_s + " exists in cache " + [x, y].to_s)
+      log_timing(type.to_s + " exists in cache " + coord.to_s)
       return doc[type.to_s]
     else
-      log_timing("no cache " + [x, y].to_s)
+      log_timing("no cache " + coord.to_s)
       return nil
     end
   end
 
   private 
-  def put(type, data, x, y)
+  def put(type, data, coord)
     coll = @db[@collections[type]]
-    rec = { :x => x, :y => x, type => data }
+    rec = { :x => coord[0], :y => coord[1], type => data }
     coll.insert rec
   end
 end

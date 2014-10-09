@@ -13,6 +13,11 @@ RSpec.describe TerrainGenerator do
     expect(t.shape_to_basenoise_coord([-5, -5])).to eq([-1, -1])
   end
 
+  it "shape_basenoise_offset" do
+    t = TerrainGenerator.new(48, 3, double("dbcache"))
+    expect(t.shape_basenoise_offset([-5, -5])).to eq([1, 1])
+  end
+
   it "get_basenoise_tileset" do
     t = TerrainGenerator.new(48, 3, double("dbcache"))
     expect(t.get_basenoise_tileset([-5, -5], [5, 5])).to eq([-1,0].product([-1,0]))
@@ -20,11 +25,26 @@ RSpec.describe TerrainGenerator do
 
   it "generate_basenoise" do
     db = double("dbcache")
-    expect(db).to receive(:basenoise_put).with(anything(), -1, -1)
-    expect(db).to receive(:basenoise_put).with(anything(), 0, 0)
+    expect(db).to receive(:basenoise_put).with(anything(), [-1, -1])
+    expect(db).to receive(:basenoise_put).with(anything(), [0, 0])
     t = TerrainGenerator.new(48, 3, db)
     t.generate_basenoise([[-1, -1], [0, 0]])
   end
+
+  it "generate_shapes" do
+    s = ShapeGenerator.new
+    db = double("dbcache")
+    expect(db).to receive(:basenoise_get).with([0, 0]) { s.get_noise_table(48) }
+    expect(db).to receive(:basenoise_get).with([0, 1]) { s.get_noise_table(48) }
+    expect(db).to receive(:basenoise_get).with([1, 0]) { s.get_noise_table(48) }
+    expect(db).to receive(:basenoise_get).with([1, 1]) { s.get_noise_table(48) }
+    expect(db).to receive(:shape_put).with(anything(), [0, 0])
+    expect(db).to receive(:shape_put).with(anything(), [0, 1])
+    expect(db).to receive(:shape_put).with(anything(), [1, 1])
+    t = TerrainGenerator.new(48, 3, db)
+    t.generate_shapes([[0, 0], [0, 1], [1, 1]])
+  end
+
 end
 
 def getGenerator

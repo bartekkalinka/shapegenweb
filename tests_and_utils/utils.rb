@@ -26,3 +26,13 @@ module Timing
     @@timingTab[message] = input_timing
   end
 end
+
+module Utils
+  def cooplus(coord1, coord2)
+    [coord1,coord2].transpose.map {|x| x.reduce(:+)}
+  end
+
+  def coominus(coord1, coord2)
+    [coord1,coord2].transpose.map {|x| x.reduce(:-)}
+  end
+end
