@@ -53,9 +53,11 @@ class TerrainGenerator
     tileset.each { |coord|
       puts "shape " + coord.to_s
       bcoord = shape_to_basenoise_coord(coord)
+      puts "from basenoise " + bcoord.to_s
       basenoisetab = (0..1).collect { |dx| (0..1).collect { |dy| @dbcache.basenoise_get(cooplus(bcoord, [dx, dy])) }}  
-      puts "shape basenoise offset " + shape_basenoise_offset(coord).to_s
-      shiftbnoise = @shapegen.get_shifted_basenoise(basenoisetab, shape_basenoise_offset(coord))
+      offset = shape_basenoise_offset(coord).collect { |c| c * @shiftstep }
+      puts "with basenoise offset " + offset.to_s
+      shiftbnoise = @shapegen.get_shifted_basenoise(basenoisetab, offset)
       shape = @shapegen.shape_from_basenoise(shiftbnoise, @iter)
       @dbcache.shape_put(shape, coord)
     }
