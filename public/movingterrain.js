@@ -10,70 +10,36 @@ $(document).ready(function() {
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
 	clearCanvas();
-	generate();
+	getShape();
 	$("#timing").hide();
 
 	window.addEventListener( "keydown", doKeyDown, true);
 
 	function doKeyDown(e) {
-		var direction = "";
 
 		switch (e.keyCode)
 		{
 		case 37:
-		    direction = "W";
 			glob.coord[0] = glob.coord[0] - 1;
 			break;
 		case 38:
-			direction = "N";
 			glob.coord[1] = glob.coord[1] - 1;
 			break;
 		case 39:
-			direction = "E";
 			glob.coord[0] = glob.coord[0] + 1;
 			break;
 		case 40:
-			direction = "S";
 			glob.coord[1] = glob.coord[1] + 1;
 			break;
 		}
 
-		if (direction != "")
-		{
-			$("#hint").hide();
-			shiftAndGenerate(direction)
-		}
+		$("#hint").hide();
+		getShape()
 	}
 
-	function generate() {
-		$.getJSON("/shapegenweb/generate", { "size":glob.size }, function(returnedData) {
-			glob.basenoise = returnedData.basenoise;
+	function getShape() {
+		$.getJSON("/shapegenweb/" + glob.coord[0] + "/" + glob.coord[1] , { }, function(returnedData) {
 			drawShape(returnedData);
-		});
-	}
-
-	function shiftAndGenerate(direction) {
-		startTiming();
-
-		var DataToSend = new Object();
-		DataToSend = { "basenoise":glob.basenoise, "direction":direction,	"timing":glob.timingTab };
-
-		$.ajax({
-			type: "PUT",
-			contentType: "application/json; charset=utf-8",
-			url: '/shapegen/shift_and_generate',
-			data: JSON.stringify(DataToSend),
-			dataType: "json",
-			success: function(returnedData) {
-				glob.basenoise = returnedData.basenoise;
-				glob.timingTab = returnedData.timing;
-				endTiming();
-				showTiming();
-				drawShape(returnedData);
-			},
-			error: function (err){
-				alert('Error: ' + err);
-			}
 		});
 	}
 
