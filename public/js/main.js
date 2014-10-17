@@ -1,12 +1,5 @@
+requirejs(['timing', 'globals'], function(timing, glob) {
 $(document).ready(function() {
-	var glob = {
-		tilesize : 6,
-		size : 48,
-		basenoise : {},
-		showTiming : true,
-		timingTab : {},
-		coord : [0, 0]
-	};
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
 	clearCanvas();
@@ -38,8 +31,11 @@ $(document).ready(function() {
 	}
 
 	function getShape() {
+		timing.start();
 		$.getJSON("/shapegenweb/" + glob.coord[0] + "/" + glob.coord[1] , { }, function(returnedData) {
 			drawShape(returnedData);
+			timing.end();
+			timing.show();
 		});
 	}
 
@@ -79,30 +75,5 @@ $(document).ready(function() {
 		}		
 	}
 
-	function startTiming() {
-		glob.timingTab = {};
-		glob.timingTab["client start"] = (new Date()).getTime();
-	}
-
-	function endTiming() {
-		glob.timingTab["client end"] = (new Date()).getTime();
-	}
-
-	function showTiming() {
-		var timingHtml = "";
-		var prevTiming = 0;
-		if(glob.showTiming) {
-			$("#timing").show();
-			for (var timing in glob.timingTab) {
-				if (glob.timingTab.hasOwnProperty(timing)) {
-					if(prevTiming != 0) {
-						timingHtml += (timing + "  " + (glob.timingTab[timing] - prevTiming) + " ms<br>");
-					}
-					prevTiming = glob.timingTab[timing];
-				}
-			}
-			$("#timing").html(timingHtml);
-		}
-	}
-
-});
+}); //$(document).ready
+}); //requirejs
