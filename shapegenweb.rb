@@ -12,5 +12,5 @@ get '/shapegenweb/:x/:y' do
 end
 
 get '/shapegenweb' do
-  redirect '/movingterrain.html'
+  redirect '/index.html'
 end
