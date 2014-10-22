@@ -1,8 +1,9 @@
 define( {
 	tilesize : 6,
 	size : 48,
-	basenoise : {},
+	shapetab : [],
 	showTiming : true,
 	timingTab : {},
-	coord : [0, 0]
+	coordx : 0,
+    coordy : 0
 });

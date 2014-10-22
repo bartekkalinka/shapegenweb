@@ -3,7 +3,7 @@ $(document).ready(function() {
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
 	clearCanvas();
-	getShape();
+	requestShape(glob.coordx, glob.coordy);
 	$("#timing").hide();
 
 	window.addEventListener( "keydown", doKeyDown, true);
@@ -13,29 +13,31 @@ $(document).ready(function() {
 		switch (e.keyCode)
 		{
 		case 37:
-			glob.coord[0] = glob.coord[0] - 1;
+			glob.coordx = glob.coordx - 1;
 			break;
 		case 38:
-			glob.coord[1] = glob.coord[1] - 1;
+			glob.coordy = glob.coordy - 1;
 			break;
 		case 39:
-			glob.coord[0] = glob.coord[0] + 1;
+			glob.coordx = glob.coordx + 1;
 			break;
 		case 40:
-			glob.coord[1] = glob.coord[1] + 1;
+			glob.coordy = glob.coordy + 1;
 			break;
 		}
 
 		$("#hint").hide();
-		getShape()
+		timing.start();
+		requestShape(glob.coordx, glob.coordy)
+        timing.end();
+        timing.show();
 	}
 
-	function getShape() {
-		timing.start();
-		$.getJSON("/shapegenweb/" + glob.coord[0] + "/" + glob.coord[1] , { }, function(returnedData) {
-			drawShape(returnedData);
-			timing.end();
-			timing.show();
+	function requestShape(x, y) {
+		$.getJSON("/shapegenweb/" + x + "/" + y , { }, 
+		  function(returnedData) {
+            saveSquare(returnedData.shape, x, y);
+			drawShape();
 		});
 	}
 
@@ -43,8 +45,19 @@ $(document).ready(function() {
 		return glob.size * glob.tilesize
 	}
 
+    function saveSquare(shape) {
+        if(!!!glob.shapetab[glob.coordx]) {
+            glob.shapetab[glob.coordx] = [];
+        }
+        glob.shapetab[glob.coordx][glob.coordy] = shape;
+    }
+
+    function getSquareShape() {
+        return glob.shapetab[glob.coordx][glob.coordy];
+    }
+
 	function getSquareOffset() {
-		return [glob.coord[0] * squareSize(), glob.coord[1] * squareSize()];
+		return [glob.coordx * squareSize(), glob.coordy * squareSize()];
 	}
 
 	function clearCanvas() {
@@ -58,10 +71,10 @@ $(document).ready(function() {
 		ctx.fillRect(offset[0], offset[1], squareSize(), squareSize());
 	}
 	
-	function drawShape(shapeData) {
+	function drawShape() {
 		clearSquare();
 		ctx.fillStyle = "rgb(255,0,0)";
-		var shape = shapeData.shape;
+		var shape = getSquareShape();
 		var offset = getSquareOffset();
 		for(i=0; i<glob.size; i+=1) {
 		  for(j=0; j<glob.size; j+=1) {
