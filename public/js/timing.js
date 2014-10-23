@@ -1,4 +1,4 @@
-define( ['globals'], function (glob) {
+define( ['js/globals'], function (glob) {
 	var start = function () {
 		glob.timingTab = {};
 		glob.timingTab["client start"] = (new Date()).getTime();
@@ -7,6 +7,10 @@ define( ['globals'], function (glob) {
 	var end = function () {
 		glob.timingTab["client end"] = (new Date()).getTime();
 	}
+
+    var log = function(str) {
+        glob.timingTab[str] = (new Date()).getTime();
+    }
 
 	var show = function () {
 		var timingHtml = "";
@@ -28,6 +32,7 @@ define( ['globals'], function (glob) {
 	return {
 		"start" : start,
 		"end" : end,
+        "log" : log,
 		"show" : show
 	};
 });

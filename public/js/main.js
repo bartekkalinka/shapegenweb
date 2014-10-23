@@ -1,10 +1,14 @@
-requirejs(['timing', 'globals'], function(timing, glob) {
+require.config({
+    urlArgs: "bust=" + (new Date()).getTime()
+});
+
+requirejs(['js/timing', 'js/globals'], function(timing, glob) {
 $(document).ready(function() {
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
 	clearCanvas();
-	requestShape(glob.coordx, glob.coordy);
-	$("#timing").hide();
+    initshapeTab(10);
+	getShapes();
 
 	window.addEventListener( "keydown", doKeyDown, true);
 
@@ -27,17 +31,26 @@ $(document).ready(function() {
 		}
 
 		$("#hint").hide();
-		timing.start();
-		requestShape(glob.coordx, glob.coordy)
-        timing.end();
-        timing.show();
+		getShapes();
 	}
 
-	function requestShape(x, y) {
+    function getShapes() {
+		timing.start();
+        requestShape(0, 0);
+        requestShape(0, 1);
+        requestShape(1, 0);
+        requestShape(1, 1);
+    }
+
+	function requestShape(dx, dy) {
+        x = glob.coordx + dx;
+        y = glob.coordy + dy;
+        timing.log("requestShape " + x + " " + y);
 		$.getJSON("/shapegenweb/" + x + "/" + y , { }, 
 		  function(returnedData) {
             saveSquare(returnedData.shape, x, y);
-			drawShape();
+			drawShape(x, y);
+            timing.show();
 		});
 	}
 
@@ -45,19 +58,26 @@ $(document).ready(function() {
 		return glob.size * glob.tilesize
 	}
 
-    function saveSquare(shape) {
-        if(!!!glob.shapetab[glob.coordx]) {
-            glob.shapetab[glob.coordx] = [];
+    function initshapeTab(n) {
+        glob.shapeTab = new Array();
+        for(i = 0; i < n; i++) {
+            glob.shapeTab[i] = new Array();
         }
-        glob.shapetab[glob.coordx][glob.coordy] = shape;
     }
 
-    function getSquareShape() {
-        return glob.shapetab[glob.coordx][glob.coordy];
+    function saveSquare(shape, x, y) {
+        timing.log("saveSquare " + x + " " + y);
+        glob.shapeTab[x][y] = shape;
+
     }
 
-	function getSquareOffset() {
-		return [glob.coordx * squareSize(), glob.coordy * squareSize()];
+    function getSquareShape(x, y) {
+        timing.log("getSquareShape " + x + " " + y);
+        return glob.shapeTab[x][y];
+    }
+
+	function getSquareOffset(dx, dy) {
+		return [dx * squareSize(), dy * squareSize()];
 	}
 
 	function clearCanvas() {
@@ -65,17 +85,19 @@ $(document).ready(function() {
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 	}
 	
-	function clearSquare() {
-		var offset = getSquareOffset();
+	function clearSquare(dx, dy) {
+		var offset = getSquareOffset(dx, dy);
 		ctx.fillStyle = "rgb(0,0,0)";
 		ctx.fillRect(offset[0], offset[1], squareSize(), squareSize());
 	}
 	
-	function drawShape() {
-		clearSquare();
+	function drawShape(x, y) {
+        dx = x - glob.coordx;
+        dy = y - glob.coordy;
+		clearSquare(dx, dy);
 		ctx.fillStyle = "rgb(255,0,0)";
-		var shape = getSquareShape();
-		var offset = getSquareOffset();
+		var shape = getSquareShape(x, y);
+		var offset = getSquareOffset(dx, dy);
 		for(i=0; i<glob.size; i+=1) {
 		  for(j=0; j<glob.size; j+=1) {
 		    if(shape[j][i]) {

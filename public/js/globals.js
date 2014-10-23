@@ -1,7 +1,7 @@
 define( {
 	tilesize : 6,
 	size : 48,
-	shapetab : [],
+	shapeTab : [],
 	showTiming : true,
 	timingTab : {},
 	coordx : 0,
