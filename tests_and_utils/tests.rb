@@ -6,17 +6,21 @@ RSpec.describe TerrainGenerator do
 
   it "basenoise_to_shape_coord" do
     t = TerrainGenerator.new(48, 3, double("dbcache"))
-    expect(t.basenoise_to_shape_coord([-1, -1])).to eq([-6, -6])
+    expect(t.basenoise_to_shape_coord([-1, -1])).to eq([-8, -8])
   end
 
   it "shape_to_basenoise_coord" do
     t = TerrainGenerator.new(48, 3, double("dbcache"))
-    expect(t.shape_to_basenoise_coord([-5, -5])).to eq([-1, -1])
+    expect(t.shape_to_basenoise_coord([-7, -5])).to eq([-1, -1])
+    expect(t.shape_to_basenoise_coord([-1, 0])).to eq([-1, 0])
+    expect(t.shape_to_basenoise_coord([0, -1])).to eq([0, -1])
   end
 
   it "shape_basenoise_offset" do
     t = TerrainGenerator.new(48, 3, double("dbcache"))
-    expect(t.shape_basenoise_offset([-5, -5])).to eq([1, 1])
+    expect(t.shape_basenoise_offset([-6, -5])).to eq([2, 3])
+    expect(t.shape_basenoise_offset([-1, 0])).to eq([7, 0])
+    expect(t.shape_basenoise_offset([0, -1])).to eq([0, 7])
   end
 
   it "get_basenoise_tileset" do
@@ -37,6 +41,23 @@ RSpec.describe TerrainGenerator do
     expect(db).to receive(:basenoise_put).with(anything(), [0, 0])
     t = TerrainGenerator.new(48, 3, db)
     t.generate_basenoise([[-1, -1], [0, 0]])
+  end
+
+  it "get_basenoisetab" do
+    db = double("dbcache")
+    expect(db).to receive(:basenoise_get).with([-1, 0]).at_least(:once)
+    expect(db).to receive(:basenoise_get).with([0, 0]).at_least(:once)
+    expect(db).to receive(:basenoise_get).with([-1, 1]).at_least(:once)
+    expect(db).to receive(:basenoise_get).with([0, 1]).at_least(:once)
+    t = TerrainGenerator.new(4, 1, db)
+    t.get_basenoisetab([-1, 0])
+    db = double("dbcache")
+    expect(db).to receive(:basenoise_get).with([0, -1]).at_least(:once)
+    expect(db).to receive(:basenoise_get).with([0, 0]).at_least(:once)
+    expect(db).to receive(:basenoise_get).with([1, -1]).at_least(:once)
+    expect(db).to receive(:basenoise_get).with([1, 0]).at_least(:once)
+    t = TerrainGenerator.new(4, 1, db)
+    t.get_basenoisetab([0, -1])
   end
 
   it "generate_shapes" do

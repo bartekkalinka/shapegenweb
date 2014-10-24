@@ -6,17 +6,18 @@ class TerrainGenerator
   def initialize(size, iter, dbcache)
     @size = size
     @iter = iter
-    @shiftstep = size / (2 ** iter)
+    @shapes_in_base = (2 ** iter)
+    @tiles_in_shape = size / @shapes_in_base
     @dbcache = dbcache
     @shapegen = ShapeGenerator.new
   end
 
   def basenoise_to_shape_coord(coord)
-    coord.collect { |c| c * @shiftstep }
+    coord.collect { |c| c * @shapes_in_base }
   end
 
   def shape_to_basenoise_coord(coord)
-    coord.collect { |c| (c / @shiftstep).floor }
+    coord.collect { |c| (c / @shapes_in_base).floor }
   end
 
   def shape_basenoise_offset(coord)
@@ -49,13 +50,17 @@ class TerrainGenerator
     }
   end
 
+  def get_basenoisetab(bcoord)
+    (0..1).collect { |dx| (0..1).collect { |dy| @dbcache.basenoise_get(cooplus(bcoord, [dx, dy])) }}  
+  end
+
   def generate_shapes(tileset)
     tileset.each { |coord|
       puts "shape " + coord.to_s
       bcoord = shape_to_basenoise_coord(coord)
       puts "from basenoise " + bcoord.to_s
-      basenoisetab = (0..1).collect { |dx| (0..1).collect { |dy| @dbcache.basenoise_get(cooplus(bcoord, [dx, dy])) }}  
-      offset = shape_basenoise_offset(coord).collect { |c| c * @shiftstep }
+      basenoisetab = get_basenoisetab(bcoord)
+      offset = shape_basenoise_offset(coord).collect { |c| c * @tiles_in_shape }
       puts "with basenoise offset " + offset.to_s
       shiftbnoise = @shapegen.get_shifted_basenoise(basenoisetab, offset)
       shape = @shapegen.shape_from_basenoise(shiftbnoise, @iter)
