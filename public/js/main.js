@@ -7,7 +7,7 @@ $(document).ready(function() {
 	var canvas = document.getElementById("canv");
 	var ctx = canvas.getContext("2d");	
 	clearCanvas();
-    initshapeTab(10);
+    initshapeTab(3);
 	getShapes();
 
 	window.addEventListener( "keydown", doKeyDown, true);
@@ -45,11 +45,10 @@ $(document).ready(function() {
 	function requestShape(dx, dy) {
         x = glob.coordx + dx;
         y = glob.coordy + dy;
-        timing.log("requestShape " + x + " " + y);
 		$.getJSON("/shapegenweb/" + x + "/" + y , { }, 
 		  function(returnedData) {
-            saveSquare(returnedData.shape, x, y);
-			drawShape(x, y);
+            saveSquare(returnedData.shape, dx, dy);
+			drawShape(dx, dy);
             timing.show();
 		});
 	}
@@ -65,15 +64,13 @@ $(document).ready(function() {
         }
     }
 
-    function saveSquare(shape, x, y) {
-        timing.log("saveSquare " + x + " " + y);
-        glob.shapeTab[x][y] = shape;
+    function saveSquare(shape, dx, dy) {
+        glob.shapeTab[dx][dy] = shape;
 
     }
 
-    function getSquareShape(x, y) {
-        timing.log("getSquareShape " + x + " " + y);
-        return glob.shapeTab[x][y];
+    function getSquareShape(dx, dy) {
+        return glob.shapeTab[dx][dy];
     }
 
 	function getSquareOffset(dx, dy) {
@@ -91,12 +88,10 @@ $(document).ready(function() {
 		ctx.fillRect(offset[0], offset[1], squareSize(), squareSize());
 	}
 	
-	function drawShape(x, y) {
-        dx = x - glob.coordx;
-        dy = y - glob.coordy;
+	function drawShape(dx, dy) {
 		clearSquare(dx, dy);
 		ctx.fillStyle = "rgb(255,0,0)";
-		var shape = getSquareShape(x, y);
+		var shape = getSquareShape(dx, dy);
 		var offset = getSquareOffset(dx, dy);
 		for(i=0; i<glob.size; i+=1) {
 		  for(j=0; j<glob.size; j+=1) {
