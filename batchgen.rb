@@ -14,4 +14,4 @@ class BatchGenerator
   end
 end
 
-BatchGenerator.generate([-2, -2], [2, 2])
+BatchGenerator.generate([-5, -5], [5, 5])
