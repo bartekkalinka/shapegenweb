@@ -13,5 +13,3 @@ class BatchGenerator
     terraingen.generate(upperLeft, lowerRight)
   end
 end
-
-BatchGenerator.generate([-5, -5], [5, 5])
