@@ -7,7 +7,7 @@ class BatchGenerator
   include MyConfig
 
   def self.generate(upperLeft, lowerRight)
-    dbcache = DbCache.new(@@dbname, @@collections)
+    dbcache = DbCache.new(@@dbconfig)
     dbcache.clear
     terraingen = TerrainGenerator.new(@@size, @@iter, dbcache)
     terraingen.generate(upperLeft, lowerRight)

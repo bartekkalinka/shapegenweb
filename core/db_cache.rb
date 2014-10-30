@@ -4,10 +4,13 @@ class DbCache
   include Mongo
   include Timing
 
-  def initialize(dbname, collections)
-    @collections = collections
-    @client = MongoClient.new
-    @db = @client[dbname]
+  def initialize(config)
+    @collections = config[:collections]
+    @client = MongoClient.new(config[:host])
+    @db = @client[config[:dbname]]
+    if(config[:auth][:needed])
+      @db.authenticate(config[:auth][:user], config[:auth][:password])
+    end
   end
 
   def basenoise_put(basenoise, coord)

@@ -3,8 +3,12 @@ module MyConfig
   @@iter = 3
   @@size = 48
   # mongodb config
-  @@dbname = 'local'
-  @@collections = {:basenoise => 'basenoise', :shape => 'shape'}
+  @@dbconfig = {
+    :dbname => 'local',
+    :collections => {:basenoise => 'basenoise', :shape => 'shape'},
+    :host => 'localhost',
+    :auth => {:needed => false}
+  }
 end
 
 module Timing
