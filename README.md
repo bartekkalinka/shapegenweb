@@ -5,6 +5,8 @@ Browsing through generated terrain on a webpage.
 
 Self-educational and recreational project.
 
+Demo: http://ruby-bka.rhcloud.com/index.html
+
 Shape generator originally comes from my [Clouds](https://github.com/bartekkalinka/clouds) game.
 
 Needs: ruby 2.0, sinatra, yajl (+ ruby dev kit on windows), rspec (for unit tests), mongo (+ instance of mongodb)
