@@ -10,8 +10,8 @@ class ShapeGenServiceSpec extends Specification with Specs2RouteTest with ShapeG
   
   "MyService" should {
 
-    "return a greeting for GET requests to the root path" in {
-      Get() ~> mainRoute ~> check {
+    "return a greeting for GET requests to hello.html path" in {
+      Get("/hello.html") ~> mainRoute ~> check {
         responseAs[String] must contain("Say hello")
       }
     }
@@ -19,13 +19,6 @@ class ShapeGenServiceSpec extends Specification with Specs2RouteTest with ShapeG
     "leave GET requests to other paths unhandled" in {
       Get("/kermit") ~> mainRoute ~> check {
         handled must beFalse
-      }
-    }
-
-    "return a MethodNotAllowed error for PUT requests to the root path" in {
-      Put() ~> sealRoute(mainRoute) ~> check {
-        status === MethodNotAllowed
-        responseAs[String] === "HTTP method not allowed, supported methods: GET"
       }
     }
   }
