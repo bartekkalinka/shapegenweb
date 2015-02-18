@@ -22,9 +22,17 @@ class ShapeGenServiceActor extends Actor with ShapeGenService {
 
 // this trait defines our service behavior independently from the service actor
 trait ShapeGenService extends HttpService {
+  val sampleJson = "{\"shape\":[[false,true], [true, false]]}"
 
   val mainRoute =
     pathPrefix("") {
-      getFromResourceDirectory("")
+      getFromResourceDirectory("client")
+    } ~
+    path("shapegenweb" / IntNumber / IntNumber) { (x, y) =>
+      get {
+        complete {
+          sampleJson
+        }
+      }
     }
 }
