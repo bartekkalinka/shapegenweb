@@ -8,11 +8,17 @@ import StatusCodes._
 class ShapeGenServiceSpec extends Specification with Specs2RouteTest with ShapeGenService {
   def actorRefFactory = system
   
-  "MyService" should {
+  "ShapeGenService" should {
 
-    "return a greeting for GET requests to hello.html path" in {
-      Get("/hello.html") ~> mainRoute ~> check {
-        responseAs[String] must contain("Say hello")
+    "return main page" in {
+      Get("/index.html") ~> mainRoute ~> check {
+        responseAs[String] must contain("Moving terrain")
+      }
+    }
+
+    "return shape json" in {
+      Get("/shapegenweb/49/51") ~> mainRoute ~> check {
+        responseAs[String] must contain("{") and contain("shape") and contain("[")
       }
     }
 

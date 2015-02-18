@@ -4,6 +4,6 @@ define( {
 	shapeTab : [],
 	showTiming : true,
 	timingTab : {},
-	coordx : 0,
-    coordy : 0
+	coordx : 50,
+    coordy : 50
 });
