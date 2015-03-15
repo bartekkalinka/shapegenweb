@@ -34,7 +34,7 @@ trait ShapeGenService extends HttpService {
     path("sector" / IntNumber / IntNumber) { (x, y) =>
       get {
         complete {
-          Noise.get.toJson.toString()
+          Terrain.get(x, y).toJson.toString()
         }
       }
     }

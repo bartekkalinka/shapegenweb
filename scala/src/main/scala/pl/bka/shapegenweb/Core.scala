@@ -3,6 +3,7 @@
  */
 package pl.bka.shapegenweb
 
+import scala.collection.mutable
 import scala.util.Random
 
 case class Noise(noise: Array[Array[Int]])
@@ -14,5 +15,11 @@ object Config {
 object Noise {
   import Config._
 
-  def get = Noise(Range(0, size).map(i => Range(0, size).map(j => Random.nextInt(1000)).toArray).toArray)
+  def get: Noise = Noise(Array.fill(size, size)(Random.nextInt(1000)))
+}
+
+object Terrain {
+  val map = new mutable.HashMap[(Int, Int), Noise]()
+
+  def get(x: Int, y: Int) = map.getOrElseUpdate((x, y), Noise.get)
 }
