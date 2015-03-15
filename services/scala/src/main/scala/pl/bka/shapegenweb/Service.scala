@@ -1,9 +1,9 @@
-package pl.bka
+package pl.bka.shapegenweb
 
 import akka.actor.Actor
 import spray.routing._
-import spray.http._
-import MediaTypes._
+import spray.json._
+import DefaultJsonProtocol._
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
@@ -19,19 +19,24 @@ class ShapeGenServiceActor extends Actor with ShapeGenService {
   def receive = runRoute(mainRoute)
 }
 
+object ShapeJsonProtocol extends DefaultJsonProtocol {
+  implicit val shapeFormat = jsonFormat1(Shape.apply)
+}
 
 // this trait defines our service behavior independently from the service actor
 trait ShapeGenService extends HttpService {
-  val sampleJson = "{\"shape\":[[false,true], [true, false]]}"
+  import ShapeJsonProtocol._
+  val sampleShape = Shape(Array(Array(false, true), Array(true, false)))
+  val sampleJson = sampleShape.toJson
 
   val mainRoute =
     pathPrefix("") {
       getFromResourceDirectory("client")
     } ~
-    path("shapegenweb" / IntNumber / IntNumber) { (x, y) =>
+    path("shape" / IntNumber / IntNumber) { (x, y) =>
       get {
         complete {
-          sampleJson
+          sampleJson.toString()
         }
       }
     }

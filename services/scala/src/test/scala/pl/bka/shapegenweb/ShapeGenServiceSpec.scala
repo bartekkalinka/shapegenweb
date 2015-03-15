@@ -1,4 +1,4 @@
-package pl.bka
+package pl.bka.shapegenweb
 
 import org.specs2.mutable.Specification
 import spray.testkit.Specs2RouteTest

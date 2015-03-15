@@ -1,4 +1,4 @@
-package pl.bka
+package pl.bka.shapegenweb
 
 import akka.actor.{ActorSystem, Props}
 import akka.io.IO

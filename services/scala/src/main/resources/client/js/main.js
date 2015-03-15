@@ -45,7 +45,7 @@ $(document).ready(function() {
 	function requestShape(dx, dy) {
         x = glob.coordx + dx;
         y = glob.coordy + dy;
-		$.getJSON("/shapegenweb/" + x + "/" + y , { }, 
+		$.getJSON("/shape/" + x + "/" + y , { },
 		  function(returnedData) {
             saveSquare(returnedData.shape, dx, dy);
 			drawShape(dx, dy);
