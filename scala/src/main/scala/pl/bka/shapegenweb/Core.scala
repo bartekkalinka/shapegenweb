@@ -3,4 +3,4 @@
  */
 package pl.bka.shapegenweb
 
-case class Shape(shape: Array[Array[Boolean]])
+case class Noise(noise: Array[Array[Int]])

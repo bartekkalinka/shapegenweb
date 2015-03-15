@@ -45,9 +45,9 @@ $(document).ready(function() {
 	function requestShape(dx, dy) {
         x = glob.coordx + dx;
         y = glob.coordy + dy;
-		$.getJSON("/shape/" + x + "/" + y , { },
+		$.getJSON("/sector/" + x + "/" + y , { },
 		  function(returnedData) {
-            saveSquare(returnedData.shape, dx, dy);
+            saveSquare(returnedData.noise, dx, dy);
 			drawShape(dx, dy);
             timing.show();
 		});
@@ -95,7 +95,7 @@ $(document).ready(function() {
 		var offset = getSquareOffset(dx, dy);
 		for(i=0; i<glob.size; i+=1) {
 		  for(j=0; j<glob.size; j+=1) {
-		    if(shape[j][i]) {
+		    if(shape[j][i] >= 500) {
 		      ctx.fillRect(
 		    		  offset[0] + glob.tilesize * j, 
 		    		  offset[1] + glob.tilesize * i, glob.tilesize, glob.tilesize

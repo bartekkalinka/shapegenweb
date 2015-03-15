@@ -19,21 +19,21 @@ class ShapeGenServiceActor extends Actor with ShapeGenService {
   def receive = runRoute(mainRoute)
 }
 
-object ShapeJsonProtocol extends DefaultJsonProtocol {
-  implicit val shapeFormat = jsonFormat1(Shape.apply)
+object NoiseJsonProtocol extends DefaultJsonProtocol {
+  implicit val shapeFormat = jsonFormat1(Noise.apply)
 }
 
 // this trait defines our service behavior independently from the service actor
 trait ShapeGenService extends HttpService {
-  import ShapeJsonProtocol._
-  val sampleShape = Shape(Array(Array(false, true), Array(true, false)))
-  val sampleJson = sampleShape.toJson
+  import NoiseJsonProtocol._
+  val sampleNoise = Noise(Array(Array(234, 643), Array(981, 441)))
+  val sampleJson = sampleNoise.toJson
 
   val mainRoute =
     pathPrefix("") {
       getFromResourceDirectory("client")
     } ~
-    path("shape" / IntNumber / IntNumber) { (x, y) =>
+    path("sector" / IntNumber / IntNumber) { (x, y) =>
       get {
         complete {
           sampleJson.toString()
