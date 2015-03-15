@@ -26,8 +26,6 @@ object NoiseJsonProtocol extends DefaultJsonProtocol {
 // this trait defines our service behavior independently from the service actor
 trait ShapeGenService extends HttpService {
   import NoiseJsonProtocol._
-  val sampleNoise = Noise(Array(Array(234, 643), Array(981, 441)))
-  val sampleJson = sampleNoise.toJson
 
   val mainRoute =
     pathPrefix("") {
@@ -36,7 +34,7 @@ trait ShapeGenService extends HttpService {
     path("sector" / IntNumber / IntNumber) { (x, y) =>
       get {
         complete {
-          sampleJson.toString()
+          Noise.get.toJson.toString()
         }
       }
     }
