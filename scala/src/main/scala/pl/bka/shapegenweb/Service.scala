@@ -3,7 +3,7 @@ package pl.bka.shapegenweb
 import akka.actor.Actor
 import spray.routing._
 import spray.json._
-import DefaultJsonProtocol._
+import spray.http.StatusCodes._
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
@@ -33,9 +33,13 @@ trait ShapeGenService extends HttpService {
     } ~
     path("sector" / IntNumber / IntNumber / IntNumber) { (x, y, detail) =>
       get {
-        complete {
-          //TODO limit detail range to 0, 1, 2, 3
-          Terrain.get(x, y, detail).toJson.toString()
+        if(detail > 3) {
+          complete(UnprocessableEntity, "detail out of 0,1,2,3 range")
+        }
+        else {
+          complete {
+            Terrain.get(x, y, detail).toJson.toString()
+          }
         }
       }
     }

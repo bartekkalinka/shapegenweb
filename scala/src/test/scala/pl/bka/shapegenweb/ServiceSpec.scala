@@ -16,9 +16,9 @@ class ShapeGenServiceSpec extends Specification with Specs2RouteTest with ShapeG
       }
     }
 
-    "return shape json" in {
-      Get("/shapegenweb/49/51") ~> mainRoute ~> check {
-        responseAs[String] must contain("{") and contain("shape") and contain("[")
+    "return sector json (with detail API)" in {
+      Get("/sector/49/51/2") ~> mainRoute ~> check {
+        responseAs[String] must contain("{") and contain("noise") and contain("[")
       }
     }
 
