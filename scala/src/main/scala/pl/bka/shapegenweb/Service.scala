@@ -31,10 +31,11 @@ trait ShapeGenService extends HttpService {
     pathPrefix("") {
       getFromResourceDirectory("client")
     } ~
-    path("sector" / IntNumber / IntNumber) { (x, y) =>
+    path("sector" / IntNumber / IntNumber / IntNumber) { (x, y, detail) =>
       get {
         complete {
-          Terrain.get(x, y).toJson.toString()
+          //TODO limit detail range to 0, 1, 2, 3
+          Terrain.get(x, y, detail).toJson.toString()
         }
       }
     }

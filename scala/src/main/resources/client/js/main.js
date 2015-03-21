@@ -45,7 +45,7 @@ $(document).ready(function() {
 	function requestShape(dx, dy) {
         x = glob.coordx + dx;
         y = glob.coordy + dy;
-		$.getJSON("/sector/" + x + "/" + y , { },
+		$.getJSON("/sector/" + x + "/" + y + "/" + glob.detail, { },
 		  function(returnedData) {
             saveSquare(returnedData.noise, dx, dy);
 			drawShape(dx, dy);
@@ -93,12 +93,15 @@ $(document).ready(function() {
 		ctx.fillStyle = "rgb(255,0,0)";
 		var shape = getSquareShape(dx, dy);
 		var offset = getSquareOffset(dx, dy);
-		for(i=0; i<glob.size; i+=1) {
-		  for(j=0; j<glob.size; j+=1) {
+		var detailScale = Math.pow(2, glob.detail)
+		var size = glob.size * detailScale
+		var tilesize = glob.tilesize / detailScale
+		for(i=0; i<size; i+=1) {
+		  for(j=0; j<size; j+=1) {
 		    if(shape[j][i] >= 500) {
 		      ctx.fillRect(
-		    		  offset[0] + glob.tilesize * j, 
-		    		  offset[1] + glob.tilesize * i, glob.tilesize, glob.tilesize
+		    		  offset[0] + tilesize * j,
+		    		  offset[1] + tilesize * i, tilesize, tilesize
 		      );
 		    }
 		  }
