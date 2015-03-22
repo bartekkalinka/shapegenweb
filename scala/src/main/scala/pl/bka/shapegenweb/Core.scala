@@ -12,7 +12,7 @@ case class Noise(noise: Array[Array[Int]]) {
 
 object Config {
   val baseSize = 6
-  val detailMultsMap = Map(0 -> 1, 1 -> 2, 2 -> 4, 3 -> 8, 4 -> 16)
+  val detailMultsMap = Map(0 -> 1, 1 -> 2, 2 -> 4, 3 -> 8)
 }
 
 object Noise {
@@ -27,11 +27,37 @@ object Noise {
 }
 
 object Terrain {
-  val map = new mutable.HashMap[(Int, Int), Map[Int, Noise]]()
+  val noiseCache = new mutable.HashMap[(Int, Int, Int), Noise]()
+  val detailMax = new mutable.HashMap[(Int, Int), Int]()
 
-  def reset = map.clear()
+  def reset = {
+    noiseCache.clear()
+    detailMax.clear()
+  }
 
-  def get(x: Int, y: Int, detail: Int): Noise =  //TODO
+  def get(x: Int, y: Int, detail: Int): Noise =  {
+    noiseCache.get((x, y, detail)) match {
+      case Some(noise) => noise
+      case None =>
+          val noise = Noise.get(detail)
+          noiseCache.put((x, y, detail), noise)
+          val newMax = detailMax.get((x, y)) match {
+            case Some(maxDetail) => if(detail > maxDetail) detail else maxDetail
+            case None => detail
+          }
+          detailMax.put((x, y), newMax)
+          noise
+    }
+  }
 
-  def get(x: Int, y: Int): Noise = //TODO
+  def get(x: Int, y: Int): Noise = {
+    detailMax.get((x, y)) match {
+      case Some(maxDetail) => noiseCache((x, y, maxDetail))
+      case None =>
+        val noise = Noise.get(0)
+        noiseCache.put((x, y, 0), noise)
+        detailMax.put((x, y), 0)
+        noise
+    }
+  }
 }
