@@ -28,9 +28,17 @@ class CoreSpec extends FlatSpec with Matchers {
 
   "Terrain.get(x, y)" should "get max detail version of given sector" in {
     Terrain.reset
-    val noise1 =Terrain.get(49, 51, 0)
+    val noise1 = Terrain.get(49, 51, 0)
     val noise2 = Terrain.get(49, 51, 1)
     val noise3 = Terrain.get(49, 51)
     noise3 should be (noise2)
+  }
+
+  "Terrain.get(x, y)" should "get max detail regardless of order of inserts" in {
+    Terrain.reset
+    val noise1 = Terrain.get(51, 49, 3)
+    val noise2 = Terrain.get(51, 49, 1)
+    val noise3 = Terrain.get(51, 49)
+    noise3 should be (noise1)
   }
 }
