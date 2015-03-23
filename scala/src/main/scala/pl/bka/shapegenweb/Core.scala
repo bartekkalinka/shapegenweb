@@ -26,7 +26,7 @@ object Noise {
   }
 }
 
-object Terrain {
+class Terrain {
   val noiseCache = new mutable.HashMap[(Int, Int, Int), Noise]()
   val detailMax = new mutable.HashMap[(Int, Int), Int]()
 

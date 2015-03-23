@@ -27,6 +27,8 @@ object NoiseJsonProtocol extends DefaultJsonProtocol {
 trait ShapeGenService extends HttpService {
   import NoiseJsonProtocol._
 
+  val terrain = new Terrain
+
   val mainRoute =
     pathPrefix("") {
       getFromResourceDirectory("client")
@@ -38,8 +40,15 @@ trait ShapeGenService extends HttpService {
         }
         else {
           complete {
-            Terrain.get(x, y, detail).toJson.toString()
+            terrain.get(x, y, detail).toJson.toString()
           }
+        }
+      }
+    } ~
+    path("sector" / IntNumber / IntNumber) { (x, y) =>
+      get {
+         complete {
+           terrain.get(x, y).toJson.toString()
         }
       }
     }

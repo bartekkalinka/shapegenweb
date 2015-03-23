@@ -12,21 +12,23 @@ object TerrainCacheSpec extends Properties("Terrain") {
   val x = 49
   val y = 51
 
+  val terrain = new Terrain
+
   def initialState() = {
-    Terrain.reset
+    terrain.reset
   }
 
   def checkMaxToCacheConsistency: Boolean = {
-    Terrain.detailMax.get(x, y) match {
-      case Some(detail) => Terrain.noiseCache.keys.exists(_ == (x, y, detail))
-      case None => !Terrain.noiseCache.keys.find({case (a, b, _) => (a, b) == (x, y)}).isDefined
+    terrain.detailMax.get(x, y) match {
+      case Some(detail) => terrain.noiseCache.keys.exists(_ == (x, y, detail))
+      case None => !terrain.noiseCache.keys.find({case (a, b, _) => (a, b) == (x, y)}).isDefined
     }
   }
 
   def checkCacheToMaxConsistency: Boolean = {
-    Terrain.noiseCache.keys.filter({case (a, b, _) => (a, b) == (x, y)}).map(_._3).toList match {
-      case Nil => !Terrain.detailMax.get(x, y).isDefined
-      case details => Terrain.detailMax.getOrElse((x, y), -1) == details.max
+    terrain.noiseCache.keys.filter({case (a, b, _) => (a, b) == (x, y)}).map(_._3).toList match {
+      case Nil => !terrain.detailMax.get(x, y).isDefined
+      case details => terrain.detailMax.getOrElse((x, y), -1) == details.max
     }
   }
 
@@ -36,11 +38,11 @@ object TerrainCacheSpec extends Properties("Terrain") {
   }
 
   case object Get2 extends MyCommand {
-    def run = Terrain.get(x, y)
+    def run = terrain.get(x, y)
   }
 
   case class Get3(detail: Int) extends MyCommand {
-    def run = Terrain.get(x, y, detail)
+    def run = terrain.get(x, y, detail)
   }
 
   val myCommandGen = Gen.oneOf(Gen.const(Get2), Gen.choose(0, 3).map(Get3(_)))
