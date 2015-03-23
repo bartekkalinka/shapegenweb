@@ -13,23 +13,16 @@ class ShapeGenServiceSpec extends FlatSpec with Matchers with ScalatestRouteTest
     }
   }
 
-  it should "return sector json (with-detail API)" in {
-    Get("/sector/49/51/2") ~> mainRoute ~> check {
+  it should "return sector json (moreDetail)" in {
+    Get("/sector/49/51/moreDetail") ~> mainRoute ~> check {
       responseAs[String] should include ("{")
       responseAs[String] should include ("noise")
       responseAs[String] should include ("[")
     }
   }
 
-  it should "return 422 when detail out of range" in {
-    Get("/sector/49/51/4") ~> mainRoute ~> check {
-      status should be (UnprocessableEntity)
-      responseAs[String] should be ("detail out of 0,1,2,3 range")
-    }
-  }
-
   it should "return sector json (without-detail API)" in {
-    Get("/sector/49/51") ~> mainRoute ~> check {
+    Get("/sector/49/51/get") ~> mainRoute ~> check {
       responseAs[String] should include ("{")
       responseAs[String] should include ("noise")
       responseAs[String] should include ("[")

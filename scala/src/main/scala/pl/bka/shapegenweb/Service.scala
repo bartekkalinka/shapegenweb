@@ -20,7 +20,7 @@ class ShapeGenServiceActor extends Actor with ShapeGenService {
 }
 
 object NoiseJsonProtocol extends DefaultJsonProtocol {
-  implicit val noiseFormat = jsonFormat1(Noise.apply)
+  implicit val noiseFormat = jsonFormat2(Noise.apply)
 }
 
 // this trait defines our service behavior independently from the service actor
@@ -33,19 +33,14 @@ trait ShapeGenService extends HttpService {
     pathPrefix("") {
       getFromResourceDirectory("client")
     } ~
-    path("sector" / IntNumber / IntNumber / IntNumber) { (x, y, detail) =>
+    path("sector" / IntNumber / IntNumber / "moreDetail") { (x, y) =>
       get {
-        if(detail > 3) {
-          complete(UnprocessableEntity, "detail out of 0,1,2,3 range")
-        }
-        else {
-          complete {
-            terrain.get(x, y, detail).toJson.toString()
-          }
+        complete {
+          terrain.moreDetail(x, y).toJson.toString()
         }
       }
     } ~
-    path("sector" / IntNumber / IntNumber) { (x, y) =>
+    path("sector" / IntNumber / IntNumber / "get") { (x, y) =>
       get {
          complete {
            terrain.get(x, y).toJson.toString()

@@ -57,7 +57,7 @@ $(document).ready(function() {
 	function requestShape(dx, dy) {
         x = glob.coordx + dx;
         y = glob.coordy + dy;
-		$.getJSON("/sector/" + x + "/" + y, { },
+		$.getJSON("/sector/" + x + "/" + y + "/get", { },
 		  function(returnedData) {
             saveSquare(returnedData, dx, dy);
 			drawShape(dx, dy);
@@ -72,7 +72,7 @@ $(document).ready(function() {
 	    }
 	    x = glob.coordx + dx;
         y = glob.coordy + dy;
-    	$.getJSON("/sector/" + x + "/" + y + "/" + (detail + 1), { },
+    	$.getJSON("/sector/" + x + "/" + y + "/moreDetail", { },
 		  function(returnedData) {
             saveSquare(returnedData, dx, dy);
 			drawShape(dx, dy);
@@ -97,11 +97,11 @@ $(document).ready(function() {
     }
 
     function getSquareShape(dx, dy) {
-        return glob.shapeTab[dx][dy][0].noise;
+        return glob.shapeTab[dx][dy].noise;
     }
 
     function getSquareDetail(dx, dy) {
-        return glob.shapeTab[dx][dy][1];
+        return glob.shapeTab[dx][dy].detail;
     }
 
 	function getSquareOffset(dx, dy) {
