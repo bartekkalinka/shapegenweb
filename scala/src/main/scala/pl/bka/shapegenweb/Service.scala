@@ -20,7 +20,7 @@ class ShapeGenServiceActor extends Actor with ShapeGenService {
 }
 
 object NoiseJsonProtocol extends DefaultJsonProtocol {
-  implicit val shapeFormat = jsonFormat1(Noise.apply)
+  implicit val noiseFormat = jsonFormat1(Noise.apply)
 }
 
 // this trait defines our service behavior independently from the service actor

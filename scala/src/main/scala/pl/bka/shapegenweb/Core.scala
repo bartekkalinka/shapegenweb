@@ -35,9 +35,9 @@ object Terrain {
     detailMax.clear()
   }
 
-  def get(x: Int, y: Int, detail: Int): Noise =  {
+  def get(x: Int, y: Int, detail: Int): (Noise, Int) =  {
     noiseCache.get(x, y, detail) match {
-      case Some(noise) => noise
+      case Some(noise) => (noise, detail)
       case None =>
           val noise = Noise.get(detail)
           noiseCache.put((x, y, detail), noise)
@@ -46,9 +46,9 @@ object Terrain {
             case None => detail
           }
           detailMax.put((x, y), newMax)
-          noise
+          (noise, detail)
     }
   }
 
-  def get(x: Int, y: Int): Noise = get(x, y, detailMax.getOrElse((x, y), 0))
+  def get(x: Int, y: Int): (Noise, Int) = get(x, y, detailMax.getOrElse((x, y), 0))
 }

@@ -47,7 +47,7 @@ $(document).ready(function() {
         y = glob.coordy + dy;
 		$.getJSON("/sector/" + x + "/" + y + "/" + glob.detail, { },
 		  function(returnedData) {
-            saveSquare(returnedData.noise, dx, dy);
+            saveSquare(returnedData[0].noise, dx, dy);
 			drawShape(dx, dy);
             timing.show();
 		});
