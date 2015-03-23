@@ -45,9 +45,9 @@ $(document).ready(function() {
 	function requestShape(dx, dy) {
         x = glob.coordx + dx;
         y = glob.coordy + dy;
-		$.getJSON("/sector/" + x + "/" + y + "/" + glob.detail, { },
+		$.getJSON("/sector/" + x + "/" + y, { },
 		  function(returnedData) {
-            saveSquare(returnedData[0].noise, dx, dy);
+            saveSquare(returnedData, dx, dy);
 			drawShape(dx, dy);
             timing.show();
 		});
@@ -64,13 +64,17 @@ $(document).ready(function() {
         }
     }
 
-    function saveSquare(shape, dx, dy) {
-        glob.shapeTab[dx][dy] = shape;
+    function saveSquare(shapeData, dx, dy) {
+        glob.shapeTab[dx][dy] = shapeData;
 
     }
 
     function getSquareShape(dx, dy) {
-        return glob.shapeTab[dx][dy];
+        return glob.shapeTab[dx][dy][0].noise;
+    }
+
+    function getSquareDetail(dx, dy) {
+        return glob.shapeTab[dx][dy][1];
     }
 
 	function getSquareOffset(dx, dy) {
@@ -93,7 +97,7 @@ $(document).ready(function() {
 		ctx.fillStyle = "rgb(255,0,0)";
 		var shape = getSquareShape(dx, dy);
 		var offset = getSquareOffset(dx, dy);
-		var detailScale = Math.pow(2, glob.detail)
+		var detailScale = Math.pow(2, getSquareDetail(dx, dy))
 		var size = glob.size * detailScale
 		var tilesize = glob.tilesize / detailScale
 		for(i=0; i<size; i+=1) {
