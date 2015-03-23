@@ -16,6 +16,18 @@ $(document).ready(function() {
 
 		switch (e.keyCode)
 		{
+		case 81: //q
+		    requestMoreDetail(0, 0)
+		    break;
+		case 87: //w
+		    requestMoreDetail(1, 0)
+		    break;
+		case 65: //a
+		    requestMoreDetail(0, 1)
+		    break;
+		case 83: //s
+		    requestMoreDetail(1, 1)
+		    break;
 		case 37:
 			glob.coordx = glob.coordx - 1;
 			break;
@@ -46,6 +58,21 @@ $(document).ready(function() {
         x = glob.coordx + dx;
         y = glob.coordy + dy;
 		$.getJSON("/sector/" + x + "/" + y, { },
+		  function(returnedData) {
+            saveSquare(returnedData, dx, dy);
+			drawShape(dx, dy);
+            timing.show();
+		});
+	}
+
+	function requestMoreDetail(dx, dy) {
+	    detail = getSquareDetail(dx, dy)
+	    if(detail == 3) {
+	        return;
+	    }
+	    x = glob.coordx + dx;
+        y = glob.coordy + dy;
+    	$.getJSON("/sector/" + x + "/" + y + "/" + (detail + 1), { },
 		  function(returnedData) {
             saveSquare(returnedData, dx, dy);
 			drawShape(dx, dy);
