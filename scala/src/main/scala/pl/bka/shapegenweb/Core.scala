@@ -7,7 +7,7 @@ import scala.collection.mutable
 import scala.util.Random
 
 case class Noise(noise: Array[Array[Int]], detail: Int) {
-  override def toString = "Noise " + noise.foldLeft("")((s, a) => s + "[" + a.foldLeft("")((s, i) => s + i + ", ") + "], ")
+  override def toString = "Noise " + noise.foldLeft("")((s, a) => s + "[" + a.foldLeft("")((s, i) => s + i + " ") + "], ") + " detail " + detail
 
   def double: Noise =
     Noise(noise.flatMap(a => Array(a.flatMap(b => Array(b, b)), a.flatMap(b => Array(b, b)))), detail + 1)

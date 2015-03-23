@@ -5,7 +5,19 @@ package pl.bka.shapegenweb
 
 import org.scalatest.{Matchers, FlatSpec}
 
-class CoreSpec extends FlatSpec with Matchers {
+class NoiseSpec extends FlatSpec with Matchers {
+  val noise = Noise(Array(Array(211, 424), Array(523, 989)), 0)
+  val dbl = noise.double
+  dbl.noise.toList.map(_.toList) should be (List(
+    List(211, 211, 424, 424),
+    List(211, 211, 424, 424),
+    List(523, 523, 989, 989),
+    List(523, 523, 989, 989)
+  ))
+  dbl.detail should be (1)
+}
+
+class TerrainSpec extends FlatSpec with Matchers {
   val terrain = new Terrain
 
   "Terrain.get(x, y, detail)" should "cache results" in {
