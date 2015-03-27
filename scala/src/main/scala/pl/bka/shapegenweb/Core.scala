@@ -6,11 +6,11 @@ package pl.bka.shapegenweb
 import scala.collection.mutable
 import scala.util.Random
 
-case class Noise(noise: Array[Array[Int]], detail: Int) {
+case class Noise(noise: Array[Array[Int]], detail: Int, level: Int) {
   override def toString = "Noise " + noise.foldLeft("")((s, a) => s + "[" + a.foldLeft("")((s, i) => s + i + " ") + "], ") + " detail " + detail
 
   def double: Noise =
-    Noise(noise.flatMap(a => Array(a.flatMap(b => Array(b, b)), a.flatMap(b => Array(b, b)))), detail + 1)
+    Noise(noise.flatMap(a => Array(a.flatMap(b => Array(b, b)), a.flatMap(b => Array(b, b)))), detail + 1, level + 1)
 
   def safeGet(x: Int, y: Int) = {
     if(x < 0 || x >= noise.size || y < 0 || y >= noise(0).size) 500 else noise(x)(y)
@@ -26,12 +26,9 @@ case class Noise(noise: Array[Array[Int]], detail: Int) {
             }
         }}).toArray
       }).toArray
-    , detail)
+    , detail, level + 1)
 
-  def moreDetail: Noise = {
-    assert(detail >= 0 && detail <= 3)
-    double.smooth
-  }
+  def nextLevel: Noise = if(level % 2 == 0) double else smooth
 }
 
 
@@ -44,7 +41,7 @@ object Noise {
   val smoothWeightMatrix = smoothMatrix.map {case (a, b) => Math.pow(2, a.abs + b.abs + 2).toInt}
 
   def base: Noise = {
-    Noise(Array.fill(baseSize, baseSize)(Random.nextInt(1000)), 0)
+    Noise(Array.fill(baseSize, baseSize)(Random.nextInt(1000)), 0, 0)
   }
 
   def detailSize(detail: Int) = Noise.baseSize * Noise.detailMultsMap(detail)
@@ -57,20 +54,20 @@ class Terrain {
     noiseCache.clear()
   }
 
-  def noiseStream: Stream[Noise] = Stream.iterate(Noise.base)(_.moreDetail)
+  def noiseStream: Stream[Noise] = Stream.iterate(Noise.base)(_.nextLevel)
 
   def moreDetail(x: Int, y: Int): Noise =  {
-    val (stream, detail) = noiseCache.get(x, y) match {
-      case Some((stream, detail)) => (stream, detail + 1)
+    val (stream, level) = noiseCache.get(x, y) match {
+      case Some((stream, level)) => (stream, level + 2)
       case None => (noiseStream, 0)
     }
-    noiseCache.put((x, y), (stream, detail))
-    stream(detail)
+    noiseCache.put((x, y), (stream, level))
+    stream(level)
   }
 
   def get(x: Int, y: Int): Noise = {
-    val (stream, detail) = noiseCache.getOrElseUpdate((x, y), (noiseStream, 0))
-    stream(detail)
+    val (stream, level) = noiseCache.getOrElseUpdate((x, y), (noiseStream, 0))
+    stream(level)
   }
 
 }

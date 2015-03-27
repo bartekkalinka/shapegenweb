@@ -6,7 +6,7 @@ package pl.bka.shapegenweb
 import org.scalatest.{Matchers, FlatSpec}
 
 class NoiseSpec extends FlatSpec with Matchers {
-  val noise = Noise(Array(Array(211, 424), Array(523, 989)), 0)
+  val noise = Noise(Array(Array(211, 424), Array(523, 989)), 0, 0)
   val dbl = noise.double
   dbl.noise.toList.map(_.toList) should be (List(
     List(211, 211, 424, 424),
