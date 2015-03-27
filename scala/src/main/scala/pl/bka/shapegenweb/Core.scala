@@ -51,21 +51,26 @@ object Noise {
 }
 
 class Terrain {
-  val noiseCache = new mutable.HashMap[(Int, Int), Noise]()
+  val noiseCache = new mutable.HashMap[(Int, Int), (Stream[Noise], Int)]
 
   def reset = {
     noiseCache.clear()
   }
 
+  def noiseStream: Stream[Noise] = Stream.iterate(Noise.base)(_.moreDetail)
+
   def moreDetail(x: Int, y: Int): Noise =  {
-    val newNoise = noiseCache.get(x, y) match {
-      case Some(noise) => noise.moreDetail
-      case None => Noise.base
+    val (stream, detail) = noiseCache.get(x, y) match {
+      case Some((stream, detail)) => (stream, detail + 1)
+      case None => (noiseStream, 0)
     }
-    noiseCache.put((x, y), newNoise)
-    newNoise
+    noiseCache.put((x, y), (stream, detail))
+    stream(detail)
   }
 
-  def get(x: Int, y: Int): Noise = noiseCache.getOrElseUpdate((x, y), Noise.base)
+  def get(x: Int, y: Int): Noise = {
+    val (stream, detail) = noiseCache.getOrElseUpdate((x, y), (noiseStream, 0))
+    stream(detail)
+  }
 
 }
