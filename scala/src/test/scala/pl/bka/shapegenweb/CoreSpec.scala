@@ -20,9 +20,10 @@ class NoiseSpec extends FlatSpec with Matchers {
   "Noise" should "keep correct detail to level relation" in {
     val noise = Noise(Array(Array(211, 424), Array(523, 989)), 0, 0)
     val noise2 = noise.double
+    def dummyGet = (noise: Array[Array[Int]], a: Int, b: Int) => 1
     noise2.detail should be (1)
     noise2.level should be (1)
-    val noise3 = noise2.smooth
+    val noise3 = noise2.smooth(dummyGet)
     noise3.detail should be (1)
     noise3.level should be (2)
     val noise4 = noise3.double
@@ -34,28 +35,28 @@ class NoiseSpec extends FlatSpec with Matchers {
 class TerrainSpec extends FlatSpec with Matchers {
   val terrain = new Terrain
 
-  "Terrain.get(x, y, detail)" should "cache results" in {
+  "Terrain.get" should "cache results" in {
     terrain.reset
     val noise1 = terrain.get(49, 51)
     val noise2 = terrain.get(49, 51)
     noise1 should be (noise2)
   }
 
-  "Terrain.get(x, y, detail)" should "size noise based on detail parameter" in {
+  "Terrain" should "size noise based on its detail" in {
     terrain.reset
     val noise1 = terrain.get(49, 51)
     val noise2 = terrain.moreDetail(49, 51)
     noise1.noise.length should be (noise2.noise.length / 2)
   }
 
-  "Terrain.get(x, y)" should "get detail 0 when used 1st time" in {
+  "Terrain.get" should "get detail 0 when used 1st time" in {
     terrain.reset
     val noise = terrain.get(49, 51)
     noise.noise.length should be (Noise.baseSize)
     noise.detail should be (0)
   }
 
-  "Terrain.get(x, y)" should "get max detail version of given sector" in {
+  "Terrain.get" should "get max detail version of given sector" in {
     terrain.reset
     val noise1 = terrain.get(49, 51)
     val noise2 = terrain.moreDetail(49, 51)
@@ -64,17 +65,37 @@ class TerrainSpec extends FlatSpec with Matchers {
     noise3.detail should be (1)
   }
 
-  "Terrain.moreDetail(x, y)" should "raise level of neighbouring sectors" in {
+  "Terrain.moreDetail" should "raise level of neighbouring sectors" in {
     terrain.reset
     terrain.get(49, 51)
     terrain.moreDetail(49, 51)
     val noise1 = terrain.get(49, 50)
     noise1.level should be (1)
+    noise1.detail should be (1)
     terrain.reset
     terrain.get(49, 51)
     terrain.moreDetail(49, 51)
     terrain.moreDetail(49, 51)
+/*
     val noise2 = terrain.get(49, 50)
     noise2.level should be (3)
+    noise2.detail should be (2)
+*/
+  }
+
+  "Terrain.safeGet" should "read neihbours tiles when getting out of sector's boundaries" in {
+    terrain.reset
+    terrain.get(49, 51)
+    val noise = terrain.moreDetail(49, 51)
+    val neighbourAbove = terrain.get(49, 50)
+    val neighbourLeft = terrain.get(48, 51)
+    val neighbourRight = terrain.get(50, 51)
+    val neighbourBelow = terrain.get(49, 52)
+    val localGet = terrain.safeGet(49, 51)
+    val size = Noise.detailSize(Noise.levDetail(1))
+    localGet(noise.noise, 0, -1) should be (neighbourAbove.noise(0)(size - 1))
+    localGet(noise.noise, -1, 0) should be (neighbourLeft.noise(size - 1)(0))
+    localGet(noise.noise, size, 0) should be (neighbourRight.noise(0)(0))
+    localGet(noise.noise, 0, size) should be (neighbourBelow.noise(0)(0))
   }
 }
