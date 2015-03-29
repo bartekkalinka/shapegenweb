@@ -66,8 +66,8 @@ $(document).ready(function() {
 	}
 
 	function requestMoreDetail(dx, dy) {
-	    detail = getSquareDetail(dx, dy)
-	    if(detail == 3) {
+	    level = getSquareLevel(dx, dy)
+	    if(level == 6) {
 	        return;
 	    }
 	    x = glob.coordx + dx;
@@ -102,6 +102,10 @@ $(document).ready(function() {
 
     function getSquareDetail(dx, dy) {
         return glob.shapeTab[dx][dy].detail;
+    }
+
+    function getSquareLevel(dx, dy) {
+        return glob.shapeTab[dx][dy].level;
     }
 
 	function getSquareOffset(dx, dy) {
