@@ -20,7 +20,7 @@ class NoiseSpec extends FlatSpec with Matchers {
   "Noise" should "keep correct detail to level relation" in {
     val noise = Noise(Array(Array(211, 424), Array(523, 989)), 0, 0)
     val noise2 = noise.double
-    def dummyGet = (noise: Array[Array[Int]], a: Int, b: Int) => 1
+    def dummyGet = (noise: Array[Array[Int]], level:Int, a: Int, b: Int) => 1
     noise2.detail should be (1)
     noise2.level should be (1)
     val noise3 = noise2.smooth(dummyGet)
@@ -76,11 +76,9 @@ class TerrainSpec extends FlatSpec with Matchers {
     terrain.get(49, 51)
     terrain.moreDetail(49, 51)
     terrain.moreDetail(49, 51)
-/*
     val noise2 = terrain.get(49, 50)
     noise2.level should be (3)
     noise2.detail should be (2)
-*/
   }
 
   "Terrain.safeGet" should "read neihbours tiles when getting out of sector's boundaries" in {
@@ -93,9 +91,9 @@ class TerrainSpec extends FlatSpec with Matchers {
     val neighbourBelow = terrain.get(49, 52)
     val localGet = terrain.safeGet(49, 51)
     val size = Noise.detailSize(Noise.levDetail(1))
-    localGet(noise.noise, 0, -1) should be (neighbourAbove.noise(0)(size - 1))
-    localGet(noise.noise, -1, 0) should be (neighbourLeft.noise(size - 1)(0))
-    localGet(noise.noise, size, 0) should be (neighbourRight.noise(0)(0))
-    localGet(noise.noise, 0, size) should be (neighbourBelow.noise(0)(0))
+    localGet(noise.noise, 2, 0, -1) should be (neighbourAbove.noise(0)(size - 1))
+    localGet(noise.noise, 2, -1, 0) should be (neighbourLeft.noise(size - 1)(0))
+    localGet(noise.noise, 2, size, 0) should be (neighbourRight.noise(0)(0))
+    localGet(noise.noise, 2, 0, size) should be (neighbourBelow.noise(0)(0))
   }
 }

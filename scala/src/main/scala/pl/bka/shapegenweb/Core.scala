@@ -12,19 +12,19 @@ case class Noise(noise: Array[Array[Int]], detail: Int, level: Int) {
   def double: Noise =
     Noise(noise.flatMap(a => Array(a.flatMap(b => Array(b, b)), a.flatMap(b => Array(b, b)))), Noise.levDetail(level + 1), level + 1)
 
-  def smooth(safeGet: (Array[Array[Int]], Int, Int) => Int): Noise =
+  def smooth(safeGet: (Array[Array[Int]], Int, Int, Int) => Int): Noise =
     Noise(
       Range(0, noise.size).map({ x => Range(0, noise(0).size).map({ y =>
         Noise.smoothCoordMatrix.foldLeft[Int](0) {
           (sum, d) =>
             d match {
-              case ((dx, dy), i) => sum + safeGet(noise, x + dx, y + dy) / Noise.smoothWeightMatrix(i)
+              case ((dx, dy), i) => sum + safeGet(noise, level + 1, x + dx, y + dy) / Noise.smoothWeightMatrix(i)
             }
         }}).toArray
       }).toArray
     , Noise.levDetail(level + 1), level + 1)
 
-  def nextLevel(safeGet: (Array[Array[Int]], Int, Int) => Int): Noise = if(level % 2 == 0) double else smooth(safeGet)
+  def nextLevel(safeGet: (Array[Array[Int]], Int, Int, Int) => Int): Noise = if(level % 2 == 0) double else smooth(safeGet)
 }
 
 
@@ -68,14 +68,14 @@ class Terrain {
   }
 
   def safeGet(x: Int, y: Int) =
-    (noise: Array[Array[Int]], a: Int, b: Int) => {
-      val (stream, level) = getCurrent(x, y)
+    (noise: Array[Array[Int]], level: Int,  a: Int, b: Int) => {
       val size = Noise.detailSize(Noise.levDetail(level))
       val (xx, aa) = if (a < 0) (x - 1, a + size) else if (a >= size) (x + 1, a - size) else (x, a)
       val (yy, bb) = if (b < 0) (y - 1, b + size) else if (b >= size) (y + 1, b - size) else (y, b)
       if (xx != x || yy != y) {
-        val (stream, level) = getCurrent(xx, yy)
-        stream(level).noise(aa)(bb)
+        val (stream, _) = getCurrent(xx, yy)
+        val reqLevel = reqNeighbourLevel(level).getOrElse(0)
+        stream(reqLevel).noise(aa)(bb)
       } else {
         noise(a)(b)
       }
@@ -86,7 +86,12 @@ class Terrain {
   }
 
   private def reqNeighbourLevel(level: Int): Option[Int] = {
-    if(level > 0 && level % 2 == 0) Some(level - 1) else None
+    if(level >= 2) {
+      Some(if (level % 2 == 0) level - 1 else level - 2)
+    }
+    else {
+      None
+    }
   }
 
   private def setLevel(x: Int, y: Int, newLevel: Int): Unit = {
