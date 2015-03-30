@@ -30,7 +30,7 @@ case class Noise(noise: Array[Array[Int]], detail: Int, level: Int) {
 
 object Noise {
   val baseSize = 6
-  val detailMultsMap = Map(0 -> 1, 1 -> 2, 2 -> 4, 3 -> 8)
+  val detailMultsMap = Map(0 -> 1, 1 -> 2, 2 -> 4, 3 -> 8) //TODO use Math.pow(...).toInt
 
   val neighboursMatrix = List.tabulate(3, 3)((a, b) => (a - 1, b - 1)).flatten
   val smoothCoordMatrix = neighboursMatrix.zipWithIndex
@@ -62,7 +62,7 @@ class Terrain {
       case Some((stream, level)) => (stream, level)
       case None =>
         val stream = noiseStream(x, y)
-        noiseCache.put((x, y), (stream, 0))
+        noiseCache.put((x, y), (stream, 0)) //TODO parametrize 0
         (stream, 0)
     }
   }
@@ -71,6 +71,7 @@ class Terrain {
     (noise: Array[Array[Int]], level: Int) =>
       (a: Int, b: Int) => {
         val size = Noise.detailSize(Noise.levDetail(level))
+        //TODO DRY:
         val (xx, aa) = if (a < 0) (x - 1, a + size) else if (a >= size) (x + 1, a - size) else (x, a)
         val (yy, bb) = if (b < 0) (y - 1, b + size) else if (b >= size) (y + 1, b - size) else (y, b)
         if (xx != x || yy != y) {
@@ -87,7 +88,7 @@ class Terrain {
     level + (if(level % 2 == 0) 2 else 1)
   }
 
-  private def reqNeighbourLevel(level: Int): Option[Int] = {
+  private def reqNeighbourLevel(level: Int): Option[Int] = { //TODO return just Int - max(0, ...)
     if(level >= 2) {
       Some(if (level % 2 == 0) level - 1 else level - 2)
     }
