@@ -75,6 +75,7 @@ class Terrain {
       if (xx != x || yy != y) {
         val (stream, _) = getCurrent(xx, yy)
         val reqLevel = reqNeighbourLevel(level).getOrElse(0)
+        setLevel(xx, yy, reqLevel)
         stream(reqLevel).noise(aa)(bb)
       } else {
         noise(a)(b)
@@ -98,11 +99,6 @@ class Terrain {
     val (stream, level) = getCurrent(x, y)
     if(level < newLevel) {
       noiseCache.put((x, y), (stream, newLevel))
-      reqNeighbourLevel(newLevel) match {
-        case Some(neighLev) =>
-          Noise.neighboursMatrix.foreach({case (a, b) => setLevel(x + a, y + b, neighLev)})
-        case None => ()
-      }
     }
   }
 
