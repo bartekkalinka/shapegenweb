@@ -87,7 +87,7 @@ class Terrain {
     level + (if(level % 2 == 0) 2 else 1)
   }
 
-  private def reqNeighbourLevel(level: Int): Int = { //TODO return just Int - max(0, ...)
+  private def reqNeighbourLevel(level: Int): Int = {
     Math.max(if (level % 2 == 0) level - 1 else level - 2, 0)
   }
 
