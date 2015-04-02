@@ -70,9 +70,9 @@ class Terrain {
     (noise: Array[Array[Int]], level: Int) =>
       (a: Int, b: Int) => {
         val size = Noise.detailSize(Noise.levDetail(level))
-        //TODO DRY:
-        val (xx, aa) = if (a < 0) (x - 1, a + size) else if (a >= size) (x + 1, a - size) else (x, a)
-        val (yy, bb) = if (b < 0) (y - 1, b + size) else if (b >= size) (y + 1, b - size) else (y, b)
+        def neighbourCoord(z: Int, c: Int) = if (c < 0) (z - 1, c + size) else if (c >= size) (z + 1, c - size) else (z, c)
+        val (xx, aa) = neighbourCoord(x, a)
+        val (yy, bb) = neighbourCoord(y, b)
         if (xx != x || yy != y) {
           val (stream, _) = getCurrent(xx, yy)
           val reqLevel = reqNeighbourLevel(level).getOrElse(0)
