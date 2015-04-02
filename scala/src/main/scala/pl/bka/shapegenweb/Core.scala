@@ -30,7 +30,6 @@ case class Noise(noise: Array[Array[Int]], detail: Int, level: Int) {
 
 object Noise {
   val baseSize = 6
-  val detailMultsMap = Map(0 -> 1, 1 -> 2, 2 -> 4, 3 -> 8) //TODO use Math.pow(...).toInt
 
   val neighboursMatrix = List.tabulate(3, 3)((a, b) => (a - 1, b - 1)).flatten
   val smoothCoordMatrix = neighboursMatrix.zipWithIndex
@@ -40,7 +39,7 @@ object Noise {
     Noise(Array.fill(baseSize, baseSize)(Random.nextInt(1000)), 0, 0)
   }
 
-  def detailSize(detail: Int) = Noise.baseSize * Noise.detailMultsMap(detail)
+  def detailSize(detail: Int) = Noise.baseSize * Math.pow(2, detail).toInt
 
   def levDetail(lev: Int): Int = (lev + 1) / 2
 }
