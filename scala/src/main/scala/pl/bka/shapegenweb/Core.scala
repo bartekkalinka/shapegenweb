@@ -45,6 +45,7 @@ object Noise {
 }
 
 class Terrain {
+  val maxLevel = 6
   val noiseCache = new mutable.HashMap[(Int, Int), (Stream[Noise], Int)]
 
   def reset = {
@@ -98,11 +99,16 @@ class Terrain {
     }
   }
 
-  def moreDetail(x: Int, y: Int): Noise =  {
+  def moreDetail(x: Int, y: Int): Noise = {
     val (stream, level) = getCurrent(x, y)
-    val newLevel = nextDetail(level)
-    setLevel(x, y, newLevel)
-    stream(newLevel)
+    if (level == maxLevel) {
+      stream(level)
+    }
+    else {
+      val newLevel = nextDetail(level)
+      setLevel(x, y, newLevel)
+      stream(newLevel)
+    }
   }
 
   def get(x: Int, y: Int): Noise = {
