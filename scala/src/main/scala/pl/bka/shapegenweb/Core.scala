@@ -75,7 +75,7 @@ class Terrain {
         val (yy, bb) = neighbourCoord(y, b)
         if (xx != x || yy != y) {
           val (stream, _) = getCurrent(xx, yy)
-          val reqLevel = reqNeighbourLevel(level).getOrElse(0)
+          val reqLevel = reqNeighbourLevel(level)
           setLevel(xx, yy, reqLevel)
           stream(reqLevel).noise(aa)(bb)
         } else {
@@ -87,13 +87,8 @@ class Terrain {
     level + (if(level % 2 == 0) 2 else 1)
   }
 
-  private def reqNeighbourLevel(level: Int): Option[Int] = { //TODO return just Int - max(0, ...)
-    if(level >= 2) {
-      Some(if (level % 2 == 0) level - 1 else level - 2)
-    }
-    else {
-      None
-    }
+  private def reqNeighbourLevel(level: Int): Int = { //TODO return just Int - max(0, ...)
+    Math.max(if (level % 2 == 0) level - 1 else level - 2, 0)
   }
 
   private def setLevel(x: Int, y: Int, newLevel: Int): Unit = {
