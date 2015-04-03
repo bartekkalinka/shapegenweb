@@ -67,7 +67,7 @@ $(document).ready(function() {
 
 	function requestMoreDetail(dx, dy) {
 	    level = getSquareLevel(dx, dy)
-	    if(level == 6) {
+	    if(level == 12) {
 	        return;
 	    }
 	    x = glob.coordx + dx;

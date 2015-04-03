@@ -1,5 +1,5 @@
 define( {
-	tilesize : 48,
+	tilesize : 64,
 	size : 6,
 	shapeTab : [],
 	showTiming : true,
