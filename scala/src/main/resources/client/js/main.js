@@ -9,6 +9,12 @@ $(document).ready(function() {
 	clearCanvas();
     initshapeTab(3);
 	getShapes();
+	setInterval(function() {
+        requestMoreDetail(0, 0);
+        requestMoreDetail(0, 1);
+        requestMoreDetail(1, 0);
+        requestMoreDetail(1, 1);
+	}, 1000);
 
 	window.addEventListener( "keydown", doKeyDown, true);
 
@@ -16,18 +22,6 @@ $(document).ready(function() {
 
 		switch (e.keyCode)
 		{
-		case 81: //q
-		    requestMoreDetail(0, 0)
-		    break;
-		case 87: //w
-		    requestMoreDetail(1, 0)
-		    break;
-		case 65: //a
-		    requestMoreDetail(0, 1)
-		    break;
-		case 83: //s
-		    requestMoreDetail(1, 1)
-		    break;
 		case 37:
 			glob.coordx = glob.coordx - 1;
 			break;
@@ -70,13 +64,17 @@ $(document).ready(function() {
 	    if(level == 12) {
 	        return;
 	    }
-	    x = glob.coordx + dx;
-        y = glob.coordy + dy;
+	    gx = glob.coordx;
+	    gy = glob.coordy;
+	    x = gx + dx;
+        y = gy + dy;
     	$.getJSON("/sector/" + x + "/" + y + "/moreDetail", { },
 		  function(returnedData) {
-            saveSquare(returnedData, dx, dy);
-			drawShape(dx, dy);
-            timing.show();
+		  	if(gx === glob.coordx && gy === glob.coordy) {
+				saveSquare(returnedData, dx, dy);
+				drawShape(dx, dy);
+				timing.show();
+            }
 		});
 	}
 
