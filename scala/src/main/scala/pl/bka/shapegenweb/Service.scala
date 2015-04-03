@@ -27,7 +27,7 @@ object NoiseJsonProtocol extends DefaultJsonProtocol {
 trait ShapeGenService extends HttpService {
   import NoiseJsonProtocol._
 
-  val terrain = new Terrain
+  val terrain = new Terrain(Config(10, 10))
 
   val mainRoute =
     pathPrefix("") {

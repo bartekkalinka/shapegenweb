@@ -33,9 +33,9 @@ class NoiseSpec extends FlatSpec with Matchers {
 }
 
 class TerrainSpec extends FlatSpec with Matchers {
-  val terrain = new Terrain
 
   "Terrain.get" should "cache results" in {
+    val terrain = new Terrain(Config(0, 6))
     terrain.reset
     val noise1 = terrain.get(49, 51)
     val noise2 = terrain.get(49, 51)
@@ -43,6 +43,7 @@ class TerrainSpec extends FlatSpec with Matchers {
   }
 
   "Terrain" should "size noise based on its detail" in {
+    val terrain = new Terrain(Config(0, 6))
     terrain.reset
     val noise1 = terrain.get(49, 51)
     val noise2 = terrain.moreDetail(49, 51)
@@ -50,6 +51,7 @@ class TerrainSpec extends FlatSpec with Matchers {
   }
 
   "Terrain.get" should "get detail 0 when used 1st time" in {
+    val terrain = new Terrain(Config(0, 6))
     terrain.reset
     val noise = terrain.get(49, 51)
     noise.noise.length should be (Noise.baseSize)
@@ -57,6 +59,7 @@ class TerrainSpec extends FlatSpec with Matchers {
   }
 
   "Terrain.get" should "get max detail version of given sector" in {
+    val terrain = new Terrain(Config(0, 6))
     terrain.reset
     val noise1 = terrain.get(49, 51)
     val noise2 = terrain.moreDetail(49, 51)
@@ -66,6 +69,7 @@ class TerrainSpec extends FlatSpec with Matchers {
   }
 
   "Terrain.moreDetail" should "raise level of neighbouring sectors" in {
+    val terrain = new Terrain(Config(0, 6))
     terrain.reset
     terrain.get(49, 51)
     terrain.moreDetail(49, 51)
@@ -82,6 +86,7 @@ class TerrainSpec extends FlatSpec with Matchers {
   }
 
   "Terrain.safeGet" should "read neihbours tiles when getting out of sector's boundaries" in {
+    val terrain = new Terrain(Config(0, 6))
     terrain.reset
     terrain.get(49, 51)
     val noise = terrain.moreDetail(49, 51)
