@@ -1,3 +1,5 @@
+name := "shapegen"
+
 organization  := "com.example"
 
 version       := "0.1"
@@ -19,5 +21,9 @@ libraryDependencies ++= {
     "org.scalatest"       %%  "scalatest"     % "2.2.1" % "test",
     "org.scalacheck"      %% "scalacheck"     % "1.12.2" % "test"
   )
+}
+
+mappings in (Compile,packageBin) ~= { (ms: Seq[(File, String)]) =>
+  ms filter { case (file, toPath) => Set("Noise", "Terrain", "Config").contains(file.getName.split('$')(0)) }
 }
 
