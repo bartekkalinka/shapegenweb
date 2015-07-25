@@ -24,6 +24,6 @@ libraryDependencies ++= {
 }
 
 mappings in (Compile,packageBin) ~= { (ms: Seq[(File, String)]) =>
-  ms filter { case (file, toPath) => Set("Noise", "Terrain", "Config").contains(file.getName.split('$')(0)) }
+  ms filter { case (file, toPath) => Set("Noise", "Terrain", "Config").contains(file.getName.replace(".class", "").split('$')(0)) }
 }
 
