@@ -13,6 +13,8 @@ Run service: sbt run
 
 Client url: http://localhost:8080/index.html
 
+Jar with core shape generator classes: sbt package
+
 Ruby version
 ===========
 
